@@ -1,0 +1,119 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.ilongli</groupId>
+	<artifactId>bogCloudPlatform</artifactId>
+	<packaging>war</packaging>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>bogCloudPlatform Maven Webapp</name>
+	<url>http://maven.apache.org</url>
+	
+	<!-- 参数配置 -->
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+        <spring.version>5.0.8.RELEASE</spring.version>
+        <spring-data.version>2.0.8.RELEASE</spring-data.version>
+        <junit.version>4.12</junit.version>
+        <servlet.version>4.0.1</servlet.version>
+        <fastjson.version>1.2.47</fastjson.version>
+        <mysql-connector.version>8.0.11</mysql-connector.version>
+        <druid.version>1.1.10</druid.version>
+        <hibernate.version>5.2.17.Final</hibernate.version>
+	</properties>
+	
+	<!-- 依赖注入 -->
+	<dependencies>
+	
+		<!-- junit -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+		</dependency>
+		
+		<!-- javax.servlet-api -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>${servlet.version}</version>
+		</dependency>
+		
+		<!-- Fastjson依赖 -->
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>${fastjson.version}</version>
+		</dependency>
+		
+		<!-- mysql-connector -->
+		<dependency>
+		    <groupId>mysql</groupId>
+		    <artifactId>mysql-connector-java</artifactId>
+		    <version>${mysql-connector.version}</version>
+		</dependency>
+		
+		<!-- druid连接池 -->
+		<dependency>
+		    <groupId>com.alibaba</groupId>
+		    <artifactId>druid</artifactId>
+		    <version>${druid.version}</version>
+		</dependency>
+		
+		<!-- hibernate -->
+		<dependency>
+	      	<groupId>org.hibernate</groupId>
+	      	<artifactId>hibernate-entitymanager</artifactId>
+	      	<version>${hibernate.version}</version>
+	    </dependency>
+		
+		
+		<!-- ***** spring相关依赖开始 ***** -->
+		<!-- spring-webmvc -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<!-- spring-web -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<!-- spring-jdbc -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<!-- spring-context -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<!-- spring-test -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<!-- spring-data-jpa -->
+		<dependency>
+		    <groupId>org.springframework.data</groupId>
+		    <artifactId>spring-data-jpa</artifactId>
+		    <version>${spring-data.version}</version>
+		</dependency>
+		<!-- ***** spring相关依赖结束 ***** -->
+		
+		
+		
+		
+	</dependencies>
+	
+	<build>
+		<finalName>bogCloudPlatform</finalName>
+	</build>
+</project>
