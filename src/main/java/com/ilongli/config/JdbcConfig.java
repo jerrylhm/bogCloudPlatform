@@ -70,7 +70,7 @@ public class JdbcConfig {
 		druidDataSource.setMinIdle(minIdle);
 		druidDataSource.setMaxActive(maxActive);
 		druidDataSource.setMaxWait(maxWait);
-		druidDataSource.setTimeBetweenEvictionRunsMillis(timeBetweenEvictionRunsMillis);
+		//druidDataSource.setTimeBetweenEvictionRunsMillis(timeBetweenEvictionRunsMillis);
 		
 		return druidDataSource;
 	}
