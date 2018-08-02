@@ -53,6 +53,21 @@ public class JdbcConfig {
 	
 	@Value(value = "${jdbc.timeBetweenEvictionRunsMillis}")
 	private long timeBetweenEvictionRunsMillis;
+	
+	@Value(value = "${jdbc.minEvictableIdleTimeMillis}")
+	private long minEvictableIdleTimeMillis;
+	
+	@Value(value = "${jdbc.validationQuery}")
+	private String validationQuery;
+	
+	@Value(value = "${jdbc.testWhileIdle}")
+	private boolean testWhileIdle;
+	
+	@Value(value = "${jdbc.testOnBorrow}")
+	private boolean testOnBorrow;
+	
+	@Value(value = "${jdbc.testOnReturn}")
+	private boolean testOnReturn;
 
 	/**
 	 * 配置数据源
@@ -71,6 +86,11 @@ public class JdbcConfig {
 		druidDataSource.setMaxActive(maxActive);
 		druidDataSource.setMaxWait(maxWait);
 		druidDataSource.setTimeBetweenEvictionRunsMillis(timeBetweenEvictionRunsMillis);
+		druidDataSource.setMinEvictableIdleTimeMillis(minEvictableIdleTimeMillis);
+		druidDataSource.setValidationQuery(validationQuery);
+		druidDataSource.setTestWhileIdle(testWhileIdle);
+		druidDataSource.setTestOnBorrow(testOnBorrow);
+		druidDataSource.setTestOnReturn(testOnReturn);
 		
 		return druidDataSource;
 	}
