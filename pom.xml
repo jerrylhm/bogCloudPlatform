@@ -21,6 +21,7 @@
         <mysql-connector.version>8.0.11</mysql-connector.version>
         <druid.version>1.1.10</druid.version>
         <hibernate.version>5.2.17.Final</hibernate.version>
+        <freemarker.version>2.3.28</freemarker.version>
 	</properties>
 	
 	<!-- 依赖注入 -->
@@ -67,6 +68,14 @@
 	      	<artifactId>hibernate-entitymanager</artifactId>
 	      	<version>${hibernate.version}</version>
 	    </dependency>
+	    
+	    <!-- freemarker -->
+		<dependency>
+		    <groupId>org.freemarker</groupId>
+		    <artifactId>freemarker</artifactId>
+		    <version>${freemarker.version}</version>
+		</dependency>
+	    
 		
 		
 		<!-- ***** spring相关依赖开始 ***** -->
@@ -92,6 +101,12 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<!-- spring-context-support -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
 		<!-- spring-test -->

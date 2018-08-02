@@ -1,5 +1,7 @@
 package com.ilongli.controller;
 
+import java.util.Map;
+
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Controller;
@@ -22,5 +24,12 @@ public class RESTDemo {
 	public String queryById(@PathVariable("id") Long id) {
 		System.out.println(Thread.currentThread().getStackTrace()[1].getMethodName() + " : " + id);
 		return "get id : " + id;
+	}
+	
+	
+	@RequestMapping("testfm")
+	public String testfm(Map<String,Object> map) {
+		map.put("user", "ilongli");
+		return "testfm";
 	}
 }

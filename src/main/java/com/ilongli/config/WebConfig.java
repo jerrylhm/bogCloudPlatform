@@ -2,6 +2,7 @@ package com.ilongli.config;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -16,8 +17,13 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
+
+import freemarker.cache.WebappTemplateLoader;
 
 /**
  * springmvc配置类
@@ -46,16 +52,49 @@ public class WebConfig extends WebMvcConfigurationSupport {
     }
 	
 	/**
-	 * 配置视图解析器
-	 * @return
+	 * 配置FreeMarker
 	 */
 	@Bean
+	public FreeMarkerConfig freeMarkerConfig() {
+		FreeMarkerConfigurer freeMarkerConfigurer = new FreeMarkerConfigurer();
+		freeMarkerConfigurer.setTemplateLoaderPath("/WEB-INF/view/");
+/*		freemarker.template.Configuration configuration = new freemarker.template.Configuration();
+		configuration.setDefaultEncoding("UTF-8");
+		configuration.setOutputEncoding("UTF-8");
+		configuration.setLocale(Locale.SIMPLIFIED_CHINESE);
+		configuration.setDateFormat("yyyy-MM-dd");
+		configuration.setTimeFormat("HH:mm:ss");
+		configuration.setDateTimeFormat("yyyy-MM-dd HH:mm:ss");
+		configuration.setClassicCompatible(true);//空串显示""
+		//configuration.setTemplateLoader(new WebappTemplateLoader(servletContext));
+		freeMarkerConfigurer.setConfiguration(configuration);*/
+		
+		return freeMarkerConfigurer;
+	}
+	
+	/**
+	 * 配置视图解析器
+	 */
+/*	@Bean
 	public ViewResolver viewResolver() {
-        InternalResourceViewResolver resolver = new InternalResourceViewResolver();//jsp视图解析器  
+        InternalResourceViewResolver resolver = new InternalResourceViewResolver();
         resolver.setPrefix("/WEB-INF/view/");  
         resolver.setSuffix(".jsp");  
-        resolver.setExposeContextBeansAsAttributes(true);  
-        return resolver; 
+		resolver.setExposeContextBeansAsAttributes(true);  
+		return resolver;
+	}*/
+	
+	@Bean
+	public FreeMarkerViewResolver freeMarkerViewResolver() {
+		//freemarker
+		FreeMarkerViewResolver viewResolver = new FreeMarkerViewResolver();
+		//viewResolver.setPrefix("/WEB-INF/view/");
+		viewResolver.setSuffix(".ftl");
+		viewResolver.setCache(true);
+/*		viewResolver.setContentType("text/html;charset=UTF-8");
+		viewResolver.setRequestContextAttribute("requestContext");
+		viewResolver.setOrder(0);*/
+        return viewResolver; 
 	}
 	
 	/**
