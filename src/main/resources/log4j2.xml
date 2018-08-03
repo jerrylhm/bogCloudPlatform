@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- status="OFF"，可以去掉，它的含义为是否记录log4j2本身的event信息，默认是OFF -->
 <!-- OFF > FATAL > ERROR > WARN > INFO > DEBUG > TRACE > ALL -->
-<Configuration>
+<!--monitorInterval：Log4j能够自动检测修改配置 文件和重新配置本身，设置间隔秒数-->
+<Configuration monitorInterval="60">
 	<Properties>
 		<!-- （*必须,各应用需要修改） 部署应用的名称,命名规则 :全部小写字母、中短横线、数字,与微服务命名,disconf中命名一致 -->
 		<property name="APPNAME">bog-cloud-platform</property>
 		<!-- （各应用需要修改）部署应用的端口号，用于一台服务器部署多台应用的情况,如果不需要，保持默认 -->
 		<property name="PORT">${sys:crtServerPort:-8080}</property>
 		<!-- （各应用需要修改）日志文件本地存放目录路径 建议各个环境跟生产环境统一起来,方便维护 -->
-		<property name="logBaseFolder">/logs</property>
+		<property name="logBaseFolder">D:/bogCloudPlatform/logs</property>
 
 		<!-- 日志文件名称的前缀部分，以下为建议值 -->
 		<property name="logFileNamePrefix">${APPNAME}</property>
@@ -16,9 +17,8 @@
 		<property name="every_file_size">50MB</property>
 		<!-- *必须并强制遵守 日志文件的编码 -->
 		<property name="log_charset">UTF-8</property>
-		<!-- *必须并强制遵守 日志格式说明： 	 |日志时间                                             |线程id|端口号      |应用名称          |类名    |方法名|日志级别|具体打印的msg内容然后换行 -->
-		<property name="log_pattern">|%d{yyyy-MM-dd HH:mm:ss.SSS}|%t|${PORT}|${APPNAME}|%logger|%M|%p|%m%n
-		</property>
+		<!-- *必须并强制遵守 日志格式说明：|日志时间|日志级别|具体打印的msg内容|线程id|端口号      |应用名称          |类名    |方法名|换行 -->
+		<property name="log_pattern">%d{yyyy-MM-dd HH:mm:ss.SSS}|[%p]|%m|%t|${PORT}|${APPNAME}|%logger|%M|%n</property>
 	</Properties>
 
 	<Appenders>
@@ -27,58 +27,60 @@
 			<PatternLayout pattern="${log_pattern}" />
 		</Console>
 
-		<!-- 以下是建议的日志压缩包目录的格式名称 -->
-		<!-- all File Config -->
-		<RollingRandomAccessFile name="all"
+		<!-- 所有日志文件，INFO级别 -->
+		<!-- 注意immediateFlush这个属性，如果设置为false，则文件内容不会实时更新，但能降低资源占用(大概) -->
+		<RollingFile name="allLog"
 			filePattern="${logBaseFolder}/%d{yyyy-MM-dd}/${logFileNamePrefix}-all-%d{yyyyMMdd-HH}.%i.log.gz"
 			fileName="${logBaseFolder}/${logFileNamePrefix}-all.log"
-			immediateFlush="false">
+			immediateFlush="true">
 			<!-- 日志输出格式 -->
 			<PatternLayout charset="${log_charset}" pattern="${log_pattern}" />
+			<!-- 显示所有信息 -->
+			<ThresholdFilter onMismatch="DENY" onMatch="ACCEPT" level="INFO" />
 			<!-- 以下是日志压缩包目录的建议格式名称 建议1天归档依次，压缩文件上线建议为200,这里预估每个磁盘存储空间200G左右，每个压缩包最大值200MB -->
 			<Policies>
-				<TimeBasedTriggeringPolicy modulate="true"
-					interval="1" />
+				<TimeBasedTriggeringPolicy modulate="true" interval="1" />
 				<SizeBaseDTriggeringPolicy size="${every_file_size}" />
 			</Policies>
 			<DefaultRolloverStrategy max="50" />
-			<Filters>
-				<!-- 显示所有信息 -->
-				<ThresholdFilter onMismatch="DENY" onMatch="ACCEPT" level="TRACE" />
-			</Filters>
-		</RollingRandomAccessFile>
+		</RollingFile>
 	
-		<!-- error File Config -->
-		<RollingRandomAccessFile name="errorLog"
+		<!-- 错误日志文件，ERROR级别 -->
+		<RollingFile name="errorLog"
 			filePattern="${logBaseFolder}/%d{yyyy-MM-dd}/${logFileNamePrefix}-error-%d{yyyyMMdd-HH}.%i.log.gz"
 			fileName="${logBaseFolder}/${logFileNamePrefix}-error.log"
-			immediateFlush="false">
-			<PatternLayout charset="${log_charset}"
-				pattern="${log_pattern}" />
+			immediateFlush="true">
+			<PatternLayout charset="${log_charset}" pattern="${log_pattern}" />
+			<!-- 只显示error信息 -->
+			<ThresholdFilter onMismatch="DENY" onMatch="ACCEPT" level="ERROR" />
 			<Policies>
-				<TimeBasedTriggeringPolicy modulate="true"
-					interval="1" />
-				<SizeBaseDTriggeringPolicy
-					size="${every_file_size}" />
+				<TimeBasedTriggeringPolicy modulate="true" interval="1" />
+				<SizeBaseDTriggeringPolicy size="${every_file_size}" />
 			</Policies>
-			<Filters>
-				<!-- 只显示error信息 -->
-				<ThresholdFilter onMismatch="DENY" onMatch="ACCEPT"
-					level="ERROR" />
-			</Filters>
-		</RollingRandomAccessFile>
+		</RollingFile>
+		
+		<!-- 开发测试使用的日志文件，这个log每次运行程序会自动清空，由append属性决定，INFO级别 -->
+		<File name="TestLog" fileName="${logBaseFolder}/${logFileNamePrefix}-test.log" append="false">
+            <PatternLayout charset="${log_charset}" pattern="${log_pattern}" />
+        </File>
 	</Appenders>
 	
 	<Loggers>
-        <Root level="INFO">
-            <!-- 各应用自行调整，日志输出至文件，自动按时间、按文件大小进行归档 ,生产环境调默认为INFO，如有特殊需求，在disconf动态调级 -->
-            <appender-ref level="DEBUG" ref="all" />
-
+		<!--过滤掉spring和hibernate的一些无用的DEBUG信息(只打印INFO级别)-->
+        <logger name="org.springframework" level="INFO"></logger>
+        <logger name="org.hibernate" level="INFO"></logger>
+        <Root level="all">
             <!-- 日志输出至Console，仅在IDE开发时打开方便开发人员，部署到服务器之后必须置为OFF，level设置为OFF表示禁用Console控制台日志输出 -->
-            <appender-ref level="WARN" ref="console" />
+            <appender-ref level="DEBUG" ref="console" />
+            
+            <!-- 各应用自行调整，日志输出至文件，自动按时间、按文件大小进行归档 ,生产环境调默认为INFO，如有特殊需求，在disconf动态调级 -->
+            <appender-ref ref="allLog" />
 
             <!-- 异常日志，不用改动 -->
-            <appender-ref level="ERROR" ref="errorLog" />
+            <appender-ref ref="errorLog" />
+            
+            <!-- 测试环境使用的日志文件 -->
+            <appender-ref level="INFO" ref="TestLog" />
         </Root>
 	</Loggers>
 </Configuration>

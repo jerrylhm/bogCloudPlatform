@@ -1,5 +1,6 @@
 package com.ilongli.config;
 
+import java.sql.SQLException;
 import java.util.Properties;
 
 import javax.persistence.EntityManagerFactory;
@@ -9,7 +10,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -31,7 +31,6 @@ import com.alibaba.druid.pool.DruidDataSource;
 @PropertySource(value = "classpath:properties/jdbc.properties")
 @EnableTransactionManagement
 @EnableJpaRepositories(basePackages="com.ilongli.repository", entityManagerFactoryRef="entityManagerFactory")
-//@ComponentScan(basePackages="ilongli")
 public class JdbcConfig {
 	
 	private static final Logger LOGGER = LogManager.getLogger(JdbcConfig.class);
@@ -109,7 +108,7 @@ public class JdbcConfig {
 		druidDataSource.setMaxWait(maxWait);
 		druidDataSource.setTimeBetweenEvictionRunsMillis(timeBetweenEvictionRunsMillis);
 		druidDataSource.setMinEvictableIdleTimeMillis(minEvictableIdleTimeMillis);
-		/*druidDataSource.setValidationQuery(validationQuery);
+		druidDataSource.setValidationQuery(validationQuery);
 		druidDataSource.setTestWhileIdle(testWhileIdle);
 		druidDataSource.setTestOnBorrow(testOnBorrow);
 		druidDataSource.setTestOnReturn(testOnReturn);
@@ -118,11 +117,9 @@ public class JdbcConfig {
 		try {
 			druidDataSource.setFilters(filters);
 		} catch (SQLException e) {
-			LOGGER.error("druid监控统计拦截filters启动失败。");
+			LOGGER.error("druid监控统计拦截filters启动失败。", e);
 		}
-		druidDataSource.setConnectionProperties(connectionProperties);*/
-		
-		LOGGER.warn("druid加载完毕。");
+		druidDataSource.setConnectionProperties(connectionProperties);
 		
 		return druidDataSource;
 	}
