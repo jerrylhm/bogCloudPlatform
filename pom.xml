@@ -22,6 +22,7 @@
         <druid.version>1.1.10</druid.version>
         <hibernate.version>5.2.17.Final</hibernate.version>
         <freemarker.version>2.3.28</freemarker.version>
+        <apache-log4j.version>2.11.1</apache-log4j.version>
 	</properties>
 	
 	<!-- 依赖注入 -->
@@ -75,6 +76,24 @@
 		    <artifactId>freemarker</artifactId>
 		    <version>${freemarker.version}</version>
 		</dependency>
+		
+		<!-- apache log4j -->
+		<dependency>
+		    <groupId>org.apache.logging.log4j</groupId>
+		    <artifactId>log4j-core</artifactId>
+		    <version>${apache-log4j.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.logging.log4j</groupId>
+		    <artifactId>log4j-api</artifactId>
+		    <version>${apache-log4j.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.logging.log4j</groupId>
+		    <artifactId>log4j-web</artifactId>
+		    <version>${apache-log4j.version}</version>
+		</dependency>
+		
 	    
 		
 		

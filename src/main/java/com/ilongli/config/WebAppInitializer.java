@@ -17,7 +17,7 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
      */  
     @Override  
     protected Class<?>[] getRootConfigClasses() {  
-        return new Class<?>[]{RootConfig.class};  
+        return new Class<?>[]{RootConfig.class, JdbcConfig.class};  
     }  
   
     /** 
@@ -25,7 +25,7 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
      */  
     @Override  
     protected Class<?>[] getServletConfigClasses() {  
-        return new Class<?>[]{WebConfig.class, JdbcConfig.class};  
+        return new Class<?>[]{WebConfig.class};  
     }  
   
     /** 
@@ -36,5 +36,7 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
     	//将DispatcherServlet映射到"/"
         return new String [] {"/"};  
     } 
+    
+    
 
 }

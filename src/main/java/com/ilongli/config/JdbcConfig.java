@@ -5,6 +5,8 @@ import java.util.Properties;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -20,12 +22,19 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.alibaba.druid.pool.DruidDataSource;
 
+/**
+ * 所有持久层的相关配置
+ * @author ilongli
+ *
+ */
 @Configuration
 @PropertySource(value = "classpath:properties/jdbc.properties")
 @EnableTransactionManagement
-@EnableJpaRepositories(basePackages="com.ilongli", entityManagerFactoryRef="entityManagerFactory")
-@ComponentScan(basePackages="ilongli")
+@EnableJpaRepositories(basePackages="com.ilongli.repository", entityManagerFactoryRef="entityManagerFactory")
+//@ComponentScan(basePackages="ilongli")
 public class JdbcConfig {
+	
+	private static final Logger LOGGER = LogManager.getLogger(JdbcConfig.class);
 	
 	@Value(value = "${jdbc.driver}")
 	private String driver;
@@ -68,6 +77,19 @@ public class JdbcConfig {
 	
 	@Value(value = "${jdbc.testOnReturn}")
 	private boolean testOnReturn;
+	
+	@Value(value = "${jdbc.poolPreparedStatements}")
+	private boolean poolPreparedStatements;
+	
+	@Value(value = "${jdbc.maxPoolPreparedStatementPerConnectionSize}")
+	private int maxPoolPreparedStatementPerConnectionSize;
+	
+	@Value(value = "${jdbc.filters}")
+	private String filters;
+	
+	@Value(value = "${jdbc.connectionProperties}")
+	private String connectionProperties;
+	
 
 	/**
 	 * 配置数据源
@@ -87,10 +109,20 @@ public class JdbcConfig {
 		druidDataSource.setMaxWait(maxWait);
 		druidDataSource.setTimeBetweenEvictionRunsMillis(timeBetweenEvictionRunsMillis);
 		druidDataSource.setMinEvictableIdleTimeMillis(minEvictableIdleTimeMillis);
-		druidDataSource.setValidationQuery(validationQuery);
+		/*druidDataSource.setValidationQuery(validationQuery);
 		druidDataSource.setTestWhileIdle(testWhileIdle);
 		druidDataSource.setTestOnBorrow(testOnBorrow);
 		druidDataSource.setTestOnReturn(testOnReturn);
+		druidDataSource.setPoolPreparedStatements(poolPreparedStatements);
+		druidDataSource.setMaxPoolPreparedStatementPerConnectionSize(maxPoolPreparedStatementPerConnectionSize);
+		try {
+			druidDataSource.setFilters(filters);
+		} catch (SQLException e) {
+			LOGGER.error("druid监控统计拦截filters启动失败。");
+		}
+		druidDataSource.setConnectionProperties(connectionProperties);*/
+		
+		LOGGER.warn("druid加载完毕。");
 		
 		return druidDataSource;
 	}
