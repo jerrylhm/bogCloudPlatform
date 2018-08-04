@@ -2,6 +2,7 @@ package com.ilongli.config;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -51,18 +52,44 @@ public class WebConfig extends WebMvcConfigurationSupport {
 	public FreeMarkerConfig freeMarkerConfig() {
 		FreeMarkerConfigurer freeMarkerConfigurer = new FreeMarkerConfigurer();
 		freeMarkerConfigurer.setTemplateLoaderPath("/WEB-INF/view/");
-/*		freemarker.template.Configuration configuration = new freemarker.template.Configuration();
-		configuration.setDefaultEncoding("UTF-8");
-		configuration.setOutputEncoding("UTF-8");
-		configuration.setLocale(Locale.SIMPLIFIED_CHINESE);
-		configuration.setDateFormat("yyyy-MM-dd");
+		freeMarkerConfigurer.setDefaultEncoding("UTF-8");
+		
+		Properties fmProperties = new Properties();
+		fmProperties.setProperty("locale", "zh_CN");
+		fmProperties.setProperty("datetime_format", "yyyy-MM-dd");
+		fmProperties.setProperty("date_format", "yyyy-MM-dd");
+		fmProperties.setProperty("time_format", "HH:mm:ss");
+		fmProperties.setProperty("number_format", "#.##");
+		
+		freeMarkerConfigurer.setFreemarkerSettings(fmProperties);
+/*		freemarker.template.Configuration configuration = 
+				new freemarker.template.Configuration(freemarker.template.Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);*/
+		//configuration.setDefaultEncoding("UTF-8");
+		//configuration.setOutputEncoding("UTF-8");
+		//configuration.setLocale(Locale.SIMPLIFIED_CHINESE);
+/*		configuration.setDateFormat("yyyy-MM-dd");
 		configuration.setTimeFormat("HH:mm:ss");
 		configuration.setDateTimeFormat("yyyy-MM-dd HH:mm:ss");
-		configuration.setClassicCompatible(true);//空串显示""
-		//configuration.setTemplateLoader(new WebappTemplateLoader(servletContext));
+		configuration.setClassicCompatible(true);//空串显示""*/
+/*		configuration.setTemplateLoader(new WebappTemplateLoader(getServletContext()));
 		freeMarkerConfigurer.setConfiguration(configuration);*/
 		
 		return freeMarkerConfigurer;
+	}
+	
+	/**
+	 * 配置FreeMarker视图解析器
+	 */
+	@Bean
+	public FreeMarkerViewResolver freeMarkerViewResolver() {
+		FreeMarkerViewResolver viewResolver = new FreeMarkerViewResolver();
+		//viewResolver.setPrefix("/WEB-INF/view/");
+		viewResolver.setSuffix(".ftl");
+		viewResolver.setCache(true);
+		viewResolver.setContentType("text/html;charset=UTF-8");
+		viewResolver.setRequestContextAttribute("rc");
+		viewResolver.setOrder(0);
+        return viewResolver; 
 	}
 	
 	/**
@@ -76,19 +103,6 @@ public class WebConfig extends WebMvcConfigurationSupport {
 		resolver.setExposeContextBeansAsAttributes(true);  
 		return resolver;
 	}*/
-	
-	@Bean
-	public FreeMarkerViewResolver freeMarkerViewResolver() {
-		//freemarker
-		FreeMarkerViewResolver viewResolver = new FreeMarkerViewResolver();
-		//viewResolver.setPrefix("/WEB-INF/view/");
-		viewResolver.setSuffix(".ftl");
-		viewResolver.setCache(true);
-/*		viewResolver.setContentType("text/html;charset=UTF-8");
-		viewResolver.setRequestContextAttribute("requestContext");
-		viewResolver.setOrder(0);*/
-        return viewResolver; 
-	}
 	
 	/**
 	 * 配置FastJSON

@@ -1,4 +1,4 @@
-package com.ilongli.web;
+package com.ilongli.web.servlet;
 
 import java.io.IOException;
 
@@ -22,21 +22,21 @@ public class ProjectFilter implements Filter {
 	
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
-		System.out.println("init----filter");
+		//TODO
 	}
 	
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
-		HttpServletRequest req = (HttpServletRequest) request;
+/*		HttpServletRequest req = (HttpServletRequest) request;
 		String uri = req.getRequestURI();
-		LOGGER.info("请求路径："+uri);
+		LOGGER.info("请求路径："+uri);*/
 		chain.doFilter(request, response);
 	}
 	
 	@Override
 	public void destroy() {
-		System.out.println("destory----filter");
+		//TODO
 	}
 
 }

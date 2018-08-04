@@ -28,9 +28,6 @@ public class RESTDemo {
 	public String queryById(@PathVariable("id") Long id) {
 		System.out.println(Thread.currentThread().getStackTrace()[1].getMethodName() + " : " + id);
 		System.out.println(userService.findAll());
-		LOGGER.info("test log4j2 info");
-		LOGGER.warn("test log4j2 warn");
-		LOGGER.error("test log4j2 error");
 		return "get id : " + id;
 	}
 	

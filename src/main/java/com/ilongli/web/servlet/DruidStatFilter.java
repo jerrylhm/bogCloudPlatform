@@ -1,4 +1,4 @@
-package com.ilongli.web;
+package com.ilongli.web.servlet;
 
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.annotation.WebInitParam;
