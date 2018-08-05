@@ -30,8 +30,11 @@ import com.ilongli.service.BaseService;
 @Service
 public class BaseServiceImpl<T, ID> implements BaseService<T, ID> {
 
-	@Resource
 	private JpaRepository<T, ID> jpaRepository;
+	
+	public void setJpaRepository(JpaRepository<T, ID> jpaRepository) {
+		this.jpaRepository = jpaRepository;
+	}
 	
 	/**
 	 * 增

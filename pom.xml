@@ -23,6 +23,7 @@
         <hibernate.version>5.2.17.Final</hibernate.version>
         <freemarker.version>2.3.28</freemarker.version>
         <apache-log4j.version>2.11.1</apache-log4j.version>
+        <shiro.version>1.4.0</shiro.version>
 	</properties>
 	
 	<!-- 依赖注入 -->
@@ -94,7 +95,28 @@
 		    <version>${apache-log4j.version}</version>
 		</dependency>
 		
-	    
+		<!-- ##### shiro相关依赖开始 ##### -->
+		<dependency>
+			<groupId>org.apache.shiro</groupId>
+			<artifactId>shiro-core</artifactId>
+			<version>${shiro.version}</version>
+		</dependency> 
+		<dependency>
+			<groupId>org.apache.shiro</groupId>
+			<artifactId>shiro-web</artifactId>
+			<version>${shiro.version}</version>
+		</dependency> 
+		<dependency>
+			<groupId>org.apache.shiro</groupId>
+			<artifactId>shiro-ehcache</artifactId>
+			<version>${shiro.version}</version>
+		</dependency> 
+		<dependency>
+			<groupId>org.apache.shiro</groupId>
+			<artifactId>shiro-spring</artifactId>
+			<version>${shiro.version}</version>
+		</dependency> 
+	    <!-- ##### shiro相关依赖结束 ##### -->
 		
 		
 		<!-- ***** spring相关依赖开始 ***** -->
@@ -141,9 +163,6 @@
 		    <version>${spring-data.version}</version>
 		</dependency>
 		<!-- ***** spring相关依赖结束 ***** -->
-		
-		
-		
 		
 	</dependencies>
 	

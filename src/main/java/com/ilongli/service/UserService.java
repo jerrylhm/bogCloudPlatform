@@ -7,5 +7,5 @@ import com.ilongli.entity.User;
  * @author ilongli
  *
  */
-public interface UserService extends BaseService<User, Integer> {
+public interface UserService extends BaseService<User, Long> {
 }
