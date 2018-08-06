@@ -1,4 +1,4 @@
-/*package com.ilongli.shiro.realm;
+package com.ilongli.shiro.realm;
 
 import javax.annotation.Resource;
 
@@ -87,4 +87,3 @@ public class UserRealm extends AuthorizingRealm {
     }
 
 }
-*/
