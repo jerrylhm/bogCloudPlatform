@@ -9,6 +9,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.ilongli.config.JdbcConfig;
 import com.ilongli.config.RootConfig;
 import com.ilongli.config.WebConfig;
+import com.ilongli.entity.Permission;
 import com.ilongli.entity.User;
 import com.ilongli.repository.PermissionRepository;
 import com.ilongli.repository.RoleRepository;
@@ -17,21 +18,51 @@ import com.ilongli.repository.UserRepository;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringJUnitWebConfig(classes = {JdbcConfig.class, RootConfig.class, WebConfig.class})
 public class TestUserService {
+	
+	@Autowired
+	private UserService userService;
+	
+	@Autowired
+	private RoleService roleService;
+	
+	@Autowired
+	private PermissionService permissionService;
+	
 
-	@Autowired
-	private UserRepository userRepository;
-/*	
-	@Autowired
-	private UserService userService;*/
-	
-	@Autowired
-	private RoleRepository roleRepository;
-	
-	@Autowired
-	private PermissionRepository permissionRepository;
 	
 	@Test
 	public void test() {
+		
+		/**
+		 * testService
+		 */
+		//System.out.println(userService.correlationRoles(2L, 1L, 2L));
+		
+//		System.out.println(userService.uncorrelationRoles(2L, 1L, 2L));
+//		
+//		System.out.println(userService.findByUsername("zhang"));
+//		
+//		System.out.println(userService.findRoles("zhang"));
+//		
+//		System.out.println(userService.findPermissions("zhang"));
+		
+		
+//		System.out.println(roleService.correlationPermissions(1L, 1L, 2L));
+	
+//		System.out.println(roleService.uncorrelationPermissions(1L, 1L, 2L));
+		
+//		System.out.println(roleService.exists(1L, 1L));
+//		
+//		System.out.println(roleService.deleteUserRole(1L));
+		
+		
+//		Permission permission = new Permission();
+//		permission.setPermission("user:create");
+//		permission.setDescription("创建用户");
+//		System.out.println(permissionService.save(permission));
+		
+//		System.out.println(permissionService.deletePermission(1L));
+		
 		
 /*		User user = userRepository.findByUsername("zhang");
 		System.out.println(user);
@@ -56,6 +87,6 @@ public class TestUserService {
 		
 //		System.out.println(roleRepository.deleteUserRole(2L));
 		
-		System.out.println(permissionRepository.deleteRolePermission(2L));
+//		System.out.println(permissionRepository.deleteRolePermission(2L));
 	}
 }

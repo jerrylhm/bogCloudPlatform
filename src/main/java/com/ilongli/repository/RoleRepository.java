@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.ilongli.entity.Role;
-import com.ilongli.entity.User;
 
 public interface RoleRepository extends JpaRepository<Role, Long> {
 
@@ -18,7 +17,6 @@ public interface RoleRepository extends JpaRepository<Role, Long> {
 	 * @param permissionId	权限id
 	 * @return	成功返回1，失败返回-1
 	 */
-	@Transactional
 	@Modifying
 	@Query(value = "INSERT INTO sys_roles_permissions(role_id, permission_id) VALUES(:roleId, :permissionId)", nativeQuery = true)
 	public int correlationPermission(@Param("roleId")Long roleId, @Param("permissionId")Long permissionId);
@@ -29,7 +27,6 @@ public interface RoleRepository extends JpaRepository<Role, Long> {
 	 * @param permissionId	权限id
 	 * @return	成功返回1，失败返回-1
 	 */
-	@Transactional
 	@Modifying
 	@Query(value = "DELETE FROM RolePermission WHERE roleId=:roleId AND permissionId=:permissionId")
 	public int uncorrelationPermission(@Param("roleId")Long roleId, @Param("permissionId")Long permissionId);
@@ -44,11 +41,10 @@ public interface RoleRepository extends JpaRepository<Role, Long> {
 	public int exists(@Param("roleId")Long roleId, @Param("permissionId")Long permissionId);
 	
 	/**
-	 * 删除和角色关联的相关数据删除
+	 * 删除和角色关联的相关数据
 	 * @param roleId	角色id
 	 * @return	成功返回1，失败返回-1
 	 */
-	@Transactional
 	@Modifying
 	@Query("DELETE FROM UserRole WHERE roleId=:roleId")
 	public int deleteUserRole(@Param("roleId")Long roleId);

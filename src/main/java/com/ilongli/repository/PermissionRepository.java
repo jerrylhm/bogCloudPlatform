@@ -12,7 +12,7 @@ import com.ilongli.entity.Permission;
 public interface PermissionRepository extends JpaRepository<Permission, Long> {
 
 	/**
-	 * 删除和权限关联的相关数据删除
+	 * 删除和权限关联的相关数据
 	 * @param roleId	角色id
 	 * @return	成功返回1，失败返回-1
 	 */

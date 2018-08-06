@@ -48,7 +48,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	 * @param roleId	角色id
 	 * @return	成功返回1，失败返回-1
 	 */
-	@Transactional
 	@Modifying
 	@Query(value = "INSERT INTO sys_users_roles(user_id, role_id) VALUES(:userId,:roleId)", nativeQuery = true)
 	public int correlationRole(@Param("userId")Long userId, @Param("roleId")Long roleId);
@@ -59,7 +58,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	 * @param roleId	角色id
 	 * @return	成功返回1，失败返回-1
 	 */
-	@Transactional
 	@Modifying
 	@Query(value = "DELETE FROM UserRole WHERE userId=:userId AND roleId=:roleId")
 	public int uncorrelationRole(@Param("userId")Long userId, @Param("roleId")Long roleId);
