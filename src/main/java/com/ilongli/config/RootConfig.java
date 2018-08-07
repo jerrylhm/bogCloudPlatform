@@ -12,4 +12,5 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScan(basePackages={"com.ilongli.service", "com.ilongli.web.exception"}) 
 public class RootConfig {
 	
+	
 }

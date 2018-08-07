@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.annotation.Order;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -47,9 +48,10 @@ public class JdbcConfig {
 	@Value(value = "${jdbc.password}")
 	private String password;
 	
+	
 	@Value(value = "${jdbc.initialSize}")
 	private int initialSize;
-	
+	/*	
 	@Value(value = "${jdbc.minIdle}")
 	private int minIdle;
 	
@@ -87,7 +89,7 @@ public class JdbcConfig {
 	private String filters;
 	
 	@Value(value = "${jdbc.connectionProperties}")
-	private String connectionProperties;
+	private String connectionProperties;*/
 	
 
 	/**
@@ -98,7 +100,17 @@ public class JdbcConfig {
 	public DataSource dataSource() {
 		DruidDataSource druidDataSource = new DruidDataSource();
 		
-		druidDataSource.setDriverClassName(driver);
+		LOGGER.debug("properties : " + driver);
+		LOGGER.debug("properties : " + url);
+		LOGGER.debug("properties : " + username);
+		LOGGER.debug("properties : " + password);
+		
+		druidDataSource.setDriverClassName("com.mysql.jdbc.Driver");
+		druidDataSource.setUrl("jdbc:mysql://localhost:3306/bogdb?useSSL=true&serverTimezone=GMT");
+		druidDataSource.setUsername("root");
+		druidDataSource.setPassword("root");
+		
+/*		druidDataSource.setDriverClassName(driver);
 		druidDataSource.setUrl(url);
 		druidDataSource.setUsername(username);
 		druidDataSource.setPassword(password);
@@ -113,13 +125,13 @@ public class JdbcConfig {
 		druidDataSource.setTestOnBorrow(testOnBorrow);
 		druidDataSource.setTestOnReturn(testOnReturn);
 		druidDataSource.setPoolPreparedStatements(poolPreparedStatements);
-		druidDataSource.setMaxPoolPreparedStatementPerConnectionSize(maxPoolPreparedStatementPerConnectionSize);
-		try {
+		druidDataSource.setMaxPoolPreparedStatementPerConnectionSize(maxPoolPreparedStatementPerConnectionSize);*/
+/*		try {
 			druidDataSource.setFilters(filters);
 		} catch (SQLException e) {
 			LOGGER.error("druid监控统计拦截filters启动失败。", e);
 		}
-		druidDataSource.setConnectionProperties(connectionProperties);
+		druidDataSource.setConnectionProperties(connectionProperties);*/
 		
 		return druidDataSource;
 	}

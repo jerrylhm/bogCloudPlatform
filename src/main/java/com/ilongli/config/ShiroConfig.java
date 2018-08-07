@@ -1,9 +1,17 @@
 package com.ilongli.config;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import javax.servlet.Filter;
+
 import org.apache.shiro.cache.ehcache.EhCacheManager;
+import org.apache.shiro.session.mgt.ExecutorServiceSessionValidationScheduler;
 import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
 import org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator;
-import org.apache.shiro.session.mgt.quartz.QuartzSessionValidationScheduler;
+import org.apache.shiro.spring.LifecycleBeanPostProcessor;
+import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
@@ -91,18 +99,28 @@ public class ShiroConfig {
 		EnterpriseCacheSessionDAO enterpriseCacheSessionDAO = new EnterpriseCacheSessionDAO();
 		enterpriseCacheSessionDAO.setActiveSessionsCacheName("shiro-activeSessionCache");
 		enterpriseCacheSessionDAO.setSessionIdGenerator(sessionIdGenerator);
-		return null;
+		return enterpriseCacheSessionDAO;
 	}
 	
 	/**
 	 * 配置会话验证调度器
+	 * 注意：这里使用QuartzSessionValidationScheduler的话log4j2会包空指针异常。
+	 *      估计是因为没有配置seesionManager，但这样配置会导致循环注入，暂时没有解决的方法。
+	 * 这里改用ExecutorServiceSessionValidationScheduler配置调度器可暂时解决问题
+	 * 参考：http://www.60kb.com/post/15.html
 	 */
-	@Bean
-	public QuartzSessionValidationScheduler sessionValidationScheduler(DefaultWebSessionManager sessionManager) {
+/*	@Bean
+	public QuartzSessionValidationScheduler sessionValidationScheduler() {
 		QuartzSessionValidationScheduler quartzSessionValidationScheduler = new QuartzSessionValidationScheduler();
 		quartzSessionValidationScheduler.setSessionValidationInterval(1800000);
-		quartzSessionValidationScheduler.setSessionManager(sessionManager);
+		//quartzSessionValidationScheduler.setSessionManager(sessionManager);
 		return quartzSessionValidationScheduler;
+	}*/
+	@Bean(name = "sessionValidationScheduler")
+	public ExecutorServiceSessionValidationScheduler sessionValidationScheduler() {
+		ExecutorServiceSessionValidationScheduler scheduler = new ExecutorServiceSessionValidationScheduler();
+		scheduler.setInterval(1800000);
+		return scheduler;
 	}
 	
 	/**
@@ -110,7 +128,7 @@ public class ShiroConfig {
 	 */
 	@Bean
 	public DefaultWebSessionManager sessionManager(
-			QuartzSessionValidationScheduler sessionValidationScheduler,
+			ExecutorServiceSessionValidationScheduler sessionValidationScheduler,
 			EnterpriseCacheSessionDAO sessionDAO,
 			SimpleCookie sessionIdCookie) {
 		DefaultWebSessionManager defaultWebSessionManager = new DefaultWebSessionManager();
@@ -158,13 +176,39 @@ public class ShiroConfig {
 		FormAuthenticationFilter formAuthenticationFilter = new FormAuthenticationFilter();
 		formAuthenticationFilter.setUsernameParam("username");
 		formAuthenticationFilter.setPasswordParam("password");
-		formAuthenticationFilter.setLoginUrl("/login.jsp");
+		formAuthenticationFilter.setLoginUrl("/test/login");
 		return formAuthenticationFilter;
 	}
 	
 	/**
-	 * Shiro的Web过滤器
+	 * 配置Shiro的Web过滤器
 	 */
+	@Bean
+	public ShiroFilterFactoryBean shiroFilter(
+			DefaultWebSecurityManager securityManager,
+			FormAuthenticationFilter formAuthenticationFilter) {
+		ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
+		shiroFilterFactoryBean.setSecurityManager(securityManager);
+		shiroFilterFactoryBean.setLoginUrl("/test/login");
+		shiroFilterFactoryBean.setUnauthorizedUrl("/test/unauthorized");
+		HashMap<String, Filter> filters = new HashMap<String, Filter>();
+		filters.put("authc", formAuthenticationFilter);
+		shiroFilterFactoryBean.setFilters(filters);
+		Map<String, String> chainMap = new LinkedHashMap<String, String>();
+		chainMap.put("/test/index", "anon");
+		chainMap.put("/test/unauthorized", "anon");
+		chainMap.put("/test/login", "authc");
+		chainMap.put("/logout", "logout");
+		chainMap.put("/**", "user");
+		shiroFilterFactoryBean.setFilterChainDefinitionMap(chainMap);
+		return shiroFilterFactoryBean;
+	}
 	
-	
+	/**
+	 * 配置Shiro生命周期处理器
+	 */
+	@Bean
+	public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
+		return new LifecycleBeanPostProcessor();
+	}
 }

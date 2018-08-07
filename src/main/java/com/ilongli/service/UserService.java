@@ -56,4 +56,17 @@ public interface UserService extends BaseService<User, Long> {
 	 * @return	存在返回true，不存在返回false
 	 */
 	public boolean exists(Long userId, Long roleId);
+	
+	/**
+	 * 更新用户密码
+	 * @param userId		用户id
+	 * @param newPassword	新的明文密码
+	 */
+	public void changePassword(Long userId, String newPassword);
+	
+	/**
+	 * 新建用户
+	 * @param user	用户对象	
+	 */
+	public User createUser(User user);
 }

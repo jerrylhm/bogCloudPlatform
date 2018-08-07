@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import com.ilongli.entity.User;
 import com.ilongli.repository.UserRepository;
 import com.ilongli.service.UserService;
+import com.ilongli.utils.PasswordHelper;
+
 
 /**
  * 用户服务层实现类
@@ -73,5 +75,20 @@ public class UserServiceImpl extends BaseServiceImpl<User, Long> implements User
 	@Override
 	public boolean exists(Long userId, Long roleId) {
 		return userRepository.exists(userId, roleId) != 0;
+	}
+
+	@Override
+	public void changePassword(Long userId, String newPassword) {
+        User user = userRepository.findById(userId).get();
+        user.setPassword(newPassword);
+        PasswordHelper.encryptPassword(user);
+        userRepository.save(user);
+	}
+
+	@Override
+	public User createUser(User user) {
+        //加密密码
+		PasswordHelper.encryptPassword(user);
+        return userRepository.save(user);
 	}
 }

@@ -37,4 +37,19 @@ public class RESTDemo {
 		map.put("user", "ilongli");
 		return "testfm";
 	}
+	
+	@RequestMapping("index")
+	public String index() {
+		return "index";
+	}
+	
+	@RequestMapping("login")
+	public String login() {
+		return "login";
+	}
+	
+	@RequestMapping("unauthorized")
+	public String unauthorized() {
+		return "unauthorized";
+	}
 }
