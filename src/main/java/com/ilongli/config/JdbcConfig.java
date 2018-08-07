@@ -8,11 +8,11 @@ import javax.sql.DataSource;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.annotation.Order;
+import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -33,64 +33,18 @@ import com.alibaba.druid.pool.DruidDataSource;
 @EnableTransactionManagement
 @EnableJpaRepositories(basePackages="com.ilongli.repository", entityManagerFactoryRef="entityManagerFactory")
 public class JdbcConfig {
+	/**
+	 * 这里使用env获取配置文件里面的值
+	 * 注意：当配置了shiro后，这里无法使用@Value注解获取，如
+	 * 		@Value(value = "${jdbc.driver}")
+	 *		private String driver; 
+	 * 具体原因未知，经初步判断，当ShiroConfig内的Bean注入DefaultWebSecurityManager securityManager属性的时候，@Value则会失效
+	 * 比如把ShiroConfig内的methodInvokingFactoryBean()和shiroFilter()注释之后，@Value注解则可正常工作。
+	 */
+    @Autowired
+    Environment env;
 	
 	private static final Logger LOGGER = LogManager.getLogger(JdbcConfig.class);
-	
-	@Value(value = "${jdbc.driver}")
-	private String driver;
-	
-	@Value(value = "${jdbc.url}")
-	private String url;
-	
-	@Value(value = "${jdbc.username}")
-	private String username;
-	
-	@Value(value = "${jdbc.password}")
-	private String password;
-	
-	
-	@Value(value = "${jdbc.initialSize}")
-	private int initialSize;
-	/*	
-	@Value(value = "${jdbc.minIdle}")
-	private int minIdle;
-	
-	@Value(value = "${jdbc.maxActive}")
-	private int maxActive;
-	
-	@Value(value = "${jdbc.maxWait}")
-	private long maxWait;
-	
-	@Value(value = "${jdbc.timeBetweenEvictionRunsMillis}")
-	private long timeBetweenEvictionRunsMillis;
-	
-	@Value(value = "${jdbc.minEvictableIdleTimeMillis}")
-	private long minEvictableIdleTimeMillis;
-	
-	@Value(value = "${jdbc.validationQuery}")
-	private String validationQuery;
-	
-	@Value(value = "${jdbc.testWhileIdle}")
-	private boolean testWhileIdle;
-	
-	@Value(value = "${jdbc.testOnBorrow}")
-	private boolean testOnBorrow;
-	
-	@Value(value = "${jdbc.testOnReturn}")
-	private boolean testOnReturn;
-	
-	@Value(value = "${jdbc.poolPreparedStatements}")
-	private boolean poolPreparedStatements;
-	
-	@Value(value = "${jdbc.maxPoolPreparedStatementPerConnectionSize}")
-	private int maxPoolPreparedStatementPerConnectionSize;
-	
-	@Value(value = "${jdbc.filters}")
-	private String filters;
-	
-	@Value(value = "${jdbc.connectionProperties}")
-	private String connectionProperties;*/
-	
 
 	/**
 	 * 配置数据源
@@ -100,38 +54,32 @@ public class JdbcConfig {
 	public DataSource dataSource() {
 		DruidDataSource druidDataSource = new DruidDataSource();
 		
-		LOGGER.debug("properties : " + driver);
-		LOGGER.debug("properties : " + url);
-		LOGGER.debug("properties : " + username);
-		LOGGER.debug("properties : " + password);
-		
-		druidDataSource.setDriverClassName("com.mysql.jdbc.Driver");
-		druidDataSource.setUrl("jdbc:mysql://localhost:3306/bogdb?useSSL=true&serverTimezone=GMT");
-		druidDataSource.setUsername("root");
-		druidDataSource.setPassword("root");
-		
-/*		druidDataSource.setDriverClassName(driver);
-		druidDataSource.setUrl(url);
-		druidDataSource.setUsername(username);
-		druidDataSource.setPassword(password);
-		druidDataSource.setInitialSize(initialSize);
-		druidDataSource.setMinIdle(minIdle);
-		druidDataSource.setMaxActive(maxActive);
-		druidDataSource.setMaxWait(maxWait);
-		druidDataSource.setTimeBetweenEvictionRunsMillis(timeBetweenEvictionRunsMillis);
-		druidDataSource.setMinEvictableIdleTimeMillis(minEvictableIdleTimeMillis);
-		druidDataSource.setValidationQuery(validationQuery);
-		druidDataSource.setTestWhileIdle(testWhileIdle);
-		druidDataSource.setTestOnBorrow(testOnBorrow);
-		druidDataSource.setTestOnReturn(testOnReturn);
-		druidDataSource.setPoolPreparedStatements(poolPreparedStatements);
-		druidDataSource.setMaxPoolPreparedStatementPerConnectionSize(maxPoolPreparedStatementPerConnectionSize);*/
-/*		try {
-			druidDataSource.setFilters(filters);
+		/**
+		 * 这里以后考虑使用反射自动注入配置文件属性值
+		 */
+		//TODO
+		druidDataSource.setDriverClassName(env.getProperty("jdbc.driver"));
+		druidDataSource.setUrl(env.getProperty("jdbc.url"));
+		druidDataSource.setUsername(env.getProperty("jdbc.username"));
+		druidDataSource.setPassword(env.getProperty("jdbc.password"));
+		druidDataSource.setInitialSize(Integer.parseInt(env.getProperty("jdbc.initialSize")));
+		druidDataSource.setMinIdle(Integer.parseInt(env.getProperty("jdbc.minIdle")));
+		druidDataSource.setMaxActive(Integer.parseInt(env.getProperty("jdbc.maxActive")));
+		druidDataSource.setMaxWait(Long.parseLong(env.getProperty("jdbc.maxWait")));
+		druidDataSource.setTimeBetweenEvictionRunsMillis(Long.parseLong(env.getProperty("jdbc.timeBetweenEvictionRunsMillis")));
+		druidDataSource.setMinEvictableIdleTimeMillis(Long.parseLong(env.getProperty("jdbc.minEvictableIdleTimeMillis")));
+		druidDataSource.setValidationQuery(env.getProperty("jdbc.validationQuery"));
+		druidDataSource.setTestWhileIdle(Boolean.parseBoolean(env.getProperty("jdbc.testWhileIdle")));
+		druidDataSource.setTestOnBorrow(Boolean.parseBoolean(env.getProperty("jdbc.testOnBorrow")));
+		druidDataSource.setTestOnReturn(Boolean.parseBoolean(env.getProperty("jdbc.testOnReturn")));
+		druidDataSource.setPoolPreparedStatements(Boolean.parseBoolean(env.getProperty("jdbc.poolPreparedStatements")));
+		druidDataSource.setMaxPoolPreparedStatementPerConnectionSize(Integer.parseInt(env.getProperty("jdbc.maxPoolPreparedStatementPerConnectionSize")));
+		try {
+			druidDataSource.setFilters(env.getProperty("jdbc.filters"));
 		} catch (SQLException e) {
 			LOGGER.error("druid监控统计拦截filters启动失败。", e);
 		}
-		druidDataSource.setConnectionProperties(connectionProperties);*/
+		druidDataSource.setConnectionProperties(env.getProperty("jdbc.connectionProperties"));
 		
 		return druidDataSource;
 	}
@@ -161,6 +109,7 @@ public class JdbcConfig {
 		lef.setPackagesToScan("com.ilongli");
 		
 		Properties jpaProperties = new Properties();
+		//TODO 抽取到配置文件
 		jpaProperties.setProperty("hibernate.ejb.naming_strategy", "org.hibernate.cfg.ImprovedNamingStrategy");
 		jpaProperties.setProperty("hibernate.dialecthibernate.dialect", "org.hibernate.dialect.MySQL5Dialect");
 		jpaProperties.setProperty("hibernate.show_sql", "true");

@@ -43,7 +43,7 @@ public class ShiroConfig {
 	}
 	
 	/**
-	 * 凭证匹配器
+	 * 配置凭证匹配器
 	 */
 	@Bean
 	public RetryLimitHashedCredentialsMatcher credentialsMatcher(EhCacheManager cacheManager) {
@@ -104,7 +104,7 @@ public class ShiroConfig {
 	
 	/**
 	 * 配置会话验证调度器
-	 * 注意：这里使用QuartzSessionValidationScheduler的话log4j2会包空指针异常。
+	 * 注意：这里使用QuartzSessionValidationScheduler的话log4j2会报空指针异常。
 	 *      估计是因为没有配置seesionManager，但这样配置会导致循环注入，暂时没有解决的方法。
 	 * 这里改用ExecutorServiceSessionValidationScheduler配置调度器可暂时解决问题
 	 * 参考：http://www.60kb.com/post/15.html

@@ -58,6 +58,7 @@ public class WebConfig extends WebMvcConfigurationSupport {
 		freeMarkerConfigurer.setTemplateLoaderPath("/WEB-INF/view/");
 		freeMarkerConfigurer.setDefaultEncoding("UTF-8");
 		
+		//TODO 抽取到配置文件
 		Properties fmProperties = new Properties();
 		fmProperties.setProperty("locale", "zh_CN");
 		fmProperties.setProperty("datetime_format", "yyyy-MM-dd");
@@ -97,7 +98,7 @@ public class WebConfig extends WebMvcConfigurationSupport {
 	}
 	
 	/**
-	 * 配置视图解析器
+	 * 配置jsp视图解析器
 	 */
 /*	@Bean
 	public ViewResolver viewResolver() {
@@ -125,7 +126,7 @@ public class WebConfig extends WebMvcConfigurationSupport {
 	/**
 	 * 开启 Shiro Spring AOP，这样才能在相应控制器使用shiro注解
 	 * 注意：这个两个bean必须配置在WebConfig(或spring-mvc.xml文件)下，即必须作为springmvc容器加载
-	 * dependsOn为非必要配置项
+	 * dependsOn为非必要配置项，待考证
 	 */
     @Bean
     @DependsOn(value = "lifecycleBeanPostProcessor")

@@ -8,15 +8,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.ilongli.config.JdbcConfig;
 import com.ilongli.config.RootConfig;
+import com.ilongli.config.ShiroConfig;
 import com.ilongli.config.WebConfig;
-import com.ilongli.entity.Permission;
-import com.ilongli.entity.User;
-import com.ilongli.repository.PermissionRepository;
-import com.ilongli.repository.RoleRepository;
-import com.ilongli.repository.UserRepository;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringJUnitWebConfig(classes = {JdbcConfig.class, RootConfig.class, WebConfig.class})
+@SpringJUnitWebConfig(classes = {JdbcConfig.class, RootConfig.class, WebConfig.class, ShiroConfig.class})
 public class TestUserService {
 	
 	@Autowired
