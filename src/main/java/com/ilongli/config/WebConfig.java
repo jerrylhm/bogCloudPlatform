@@ -1,9 +1,12 @@
 package com.ilongli.config;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
@@ -15,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
@@ -22,6 +26,8 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
+import com.ilongli.utils.PropertiesUtil;
+import com.ilongli.web.interceptor.MyInterceptor;
 
 /**
  * springmvc配置类
@@ -31,6 +37,8 @@ import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 @Configuration
 @ComponentScan("com.ilongli.controller")
 public class WebConfig extends WebMvcConfigurationSupport {
+	
+	private static final Logger LOGGER = LogManager.getLogger(WebConfig.class);
 
     /** 
      * 配置静态资源的处理 
@@ -58,14 +66,12 @@ public class WebConfig extends WebMvcConfigurationSupport {
 		freeMarkerConfigurer.setTemplateLoaderPath("/WEB-INF/view/");
 		freeMarkerConfigurer.setDefaultEncoding("UTF-8");
 		
-		//TODO 抽取到配置文件
 		Properties fmProperties = new Properties();
-		fmProperties.setProperty("locale", "zh_CN");
-		fmProperties.setProperty("datetime_format", "yyyy-MM-dd");
-		fmProperties.setProperty("date_format", "yyyy-MM-dd");
-		fmProperties.setProperty("time_format", "HH:mm:ss");
-		fmProperties.setProperty("number_format", "#.##");
-		
+		try {
+			PropertiesUtil.loadProperties(fmProperties, getClass().getClassLoader().getResource("properties/freemarker.properties").getPath());
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage());
+		}
 		freeMarkerConfigurer.setFreemarkerSettings(fmProperties);
 /*		freemarker.template.Configuration configuration = 
 				new freemarker.template.Configuration(freemarker.template.Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);*/
@@ -122,6 +128,14 @@ public class WebConfig extends WebMvcConfigurationSupport {
         fastJsonHttpMessageConverter.setSupportedMediaTypes(list);
         converters.add(fastJsonHttpMessageConverter);
     }
+	
+	/**
+	 * 添加拦截器
+	 */
+	@Override
+	protected void addInterceptors(InterceptorRegistry registry) {
+		registry.addInterceptor(new MyInterceptor()).addPathPatterns("/hello1");	
+	}
 	
 	/**
 	 * 开启 Shiro Spring AOP，这样才能在相应控制器使用shiro注解

@@ -9,10 +9,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.ilongli.config.JdbcConfig;
 import com.ilongli.config.RootConfig;
 import com.ilongli.config.ShiroConfig;
+import com.ilongli.config.TestProperty;
 import com.ilongli.config.WebConfig;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringJUnitWebConfig(classes = {JdbcConfig.class, RootConfig.class, WebConfig.class, ShiroConfig.class})
+@SpringJUnitWebConfig(classes = {JdbcConfig.class, RootConfig.class, WebConfig.class, ShiroConfig.class, TestProperty.class})
 public class TestUserService {
 	
 	@Autowired

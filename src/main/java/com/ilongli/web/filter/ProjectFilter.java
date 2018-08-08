@@ -1,4 +1,4 @@
-/*package com.ilongli.web.filter;
+package com.ilongli.web.filter;
 
 import java.io.IOException;
 
@@ -9,12 +9,14 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.core.annotation.Order;
 
 @WebFilter(filterName="projectFilter", urlPatterns={ "/*" })
-@Order(value = 1)
+@Order(value = 2)
 public class ProjectFilter implements Filter {
 
 	private static final Logger LOGGER = LogManager.getLogger(ProjectFilter.class);
@@ -39,4 +41,3 @@ public class ProjectFilter implements Filter {
 	}
 
 }
-*/

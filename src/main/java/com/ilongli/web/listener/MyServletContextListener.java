@@ -13,7 +13,7 @@ public class MyServletContextListener implements ServletContextListener {
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
 		//开启项目的时候设置 Log4j2配置文件的路径
-		Configurator.initialize("Log4j2", Thread.currentThread().getContextClassLoader().getResource("properties/log4j2.xml").getPath());
+		Configurator.initialize("Log4j2", getClass().getClassLoader().getResource("properties/log4j2.xml").getPath());
 	}
 	
 	@Override

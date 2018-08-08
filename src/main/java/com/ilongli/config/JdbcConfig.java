@@ -1,5 +1,6 @@
 package com.ilongli.config;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Properties;
 
@@ -22,6 +23,7 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.ilongli.utils.PropertiesUtil;
 
 /**
  * 所有持久层的相关配置
@@ -62,18 +64,18 @@ public class JdbcConfig {
 		druidDataSource.setUrl(env.getProperty("jdbc.url"));
 		druidDataSource.setUsername(env.getProperty("jdbc.username"));
 		druidDataSource.setPassword(env.getProperty("jdbc.password"));
-		druidDataSource.setInitialSize(Integer.parseInt(env.getProperty("jdbc.initialSize")));
-		druidDataSource.setMinIdle(Integer.parseInt(env.getProperty("jdbc.minIdle")));
-		druidDataSource.setMaxActive(Integer.parseInt(env.getProperty("jdbc.maxActive")));
-		druidDataSource.setMaxWait(Long.parseLong(env.getProperty("jdbc.maxWait")));
-		druidDataSource.setTimeBetweenEvictionRunsMillis(Long.parseLong(env.getProperty("jdbc.timeBetweenEvictionRunsMillis")));
-		druidDataSource.setMinEvictableIdleTimeMillis(Long.parseLong(env.getProperty("jdbc.minEvictableIdleTimeMillis")));
+		druidDataSource.setInitialSize(env.getProperty("jdbc.initialSize", Integer.class));
+		druidDataSource.setMinIdle(env.getProperty("jdbc.minIdle", Integer.class));
+		druidDataSource.setMaxActive(env.getProperty("jdbc.maxActive", Integer.class));
+		druidDataSource.setMaxWait(env.getProperty("jdbc.maxWait", Long.class));
+		druidDataSource.setTimeBetweenEvictionRunsMillis(env.getProperty("jdbc.timeBetweenEvictionRunsMillis", Long.class));
+		druidDataSource.setMinEvictableIdleTimeMillis(env.getProperty("jdbc.minEvictableIdleTimeMillis", Long.class));
 		druidDataSource.setValidationQuery(env.getProperty("jdbc.validationQuery"));
-		druidDataSource.setTestWhileIdle(Boolean.parseBoolean(env.getProperty("jdbc.testWhileIdle")));
-		druidDataSource.setTestOnBorrow(Boolean.parseBoolean(env.getProperty("jdbc.testOnBorrow")));
-		druidDataSource.setTestOnReturn(Boolean.parseBoolean(env.getProperty("jdbc.testOnReturn")));
-		druidDataSource.setPoolPreparedStatements(Boolean.parseBoolean(env.getProperty("jdbc.poolPreparedStatements")));
-		druidDataSource.setMaxPoolPreparedStatementPerConnectionSize(Integer.parseInt(env.getProperty("jdbc.maxPoolPreparedStatementPerConnectionSize")));
+		druidDataSource.setTestWhileIdle(env.getProperty("jdbc.testWhileIdle", Boolean.class));
+		druidDataSource.setTestOnBorrow(env.getProperty("jdbc.testOnBorrow", Boolean.class));
+		druidDataSource.setTestOnReturn(env.getProperty("jdbc.testOnReturn", Boolean.class));
+		druidDataSource.setPoolPreparedStatements(env.getProperty("jdbc.poolPreparedStatements", Boolean.class));
+		druidDataSource.setMaxPoolPreparedStatementPerConnectionSize(env.getProperty("jdbc.maxPoolPreparedStatementPerConnectionSize", Integer.class));
 		try {
 			druidDataSource.setFilters(env.getProperty("jdbc.filters"));
 		} catch (SQLException e) {
@@ -109,13 +111,11 @@ public class JdbcConfig {
 		lef.setPackagesToScan("com.ilongli");
 		
 		Properties jpaProperties = new Properties();
-		//TODO 抽取到配置文件
-		jpaProperties.setProperty("hibernate.ejb.naming_strategy", "org.hibernate.cfg.ImprovedNamingStrategy");
-		jpaProperties.setProperty("hibernate.dialecthibernate.dialect", "org.hibernate.dialect.MySQL5Dialect");
-		jpaProperties.setProperty("hibernate.show_sql", "true");
-		jpaProperties.setProperty("hibernate.format_sql", "true");
-		jpaProperties.setProperty("hibernate.hbm2ddl.auto", "update");
-		jpaProperties.setProperty("hibernate.id.new_generator_mappings", "false");
+		try {
+			PropertiesUtil.loadProperties(jpaProperties, getClass().getClassLoader().getResource("properties/hibernate.properties").getPath());
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage());
+		}
 		lef.setJpaProperties(jpaProperties);
 		
 		return lef;
