@@ -19,4 +19,12 @@ public class AnnotationController {
     public String hello2() {
         return "success";
     }
+    
+	/**
+	 * 404错误返回的页面 
+	 */
+	@RequestMapping("*")
+	public String noHandlerFound() {
+		return "404";
+	}
 }

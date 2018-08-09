@@ -7,12 +7,14 @@ import java.util.Map;
 import javax.servlet.Filter;
 
 import org.apache.shiro.cache.ehcache.EhCacheManager;
+import org.apache.shiro.codec.Base64;
 import org.apache.shiro.session.mgt.ExecutorServiceSessionValidationScheduler;
 import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
 import org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
+import org.apache.shiro.web.mgt.CookieRememberMeManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
@@ -87,8 +89,30 @@ public class ShiroConfig {
 		SimpleCookie simpleCookie = new SimpleCookie("sid");
 		simpleCookie.setValue("sid");
 		simpleCookie.setHttpOnly(true);
-		simpleCookie.setMaxAge(180000);
+		simpleCookie.setMaxAge(-1);	//-1表示浏览器关闭时失效此Cookie
 		return simpleCookie;
+	}
+	
+	/**
+	 * 配置记住我功能Cookie
+	 */
+	@Bean
+	public SimpleCookie rememberMeCookie() {
+		SimpleCookie simpleCookie = new SimpleCookie("rememberMe");
+		simpleCookie.setHttpOnly(true);
+		simpleCookie.setMaxAge(864000);	//10天
+		return simpleCookie;
+	}
+	
+	/**
+	 * rememberMe管理器
+	 */
+	@Bean
+	public CookieRememberMeManager rememberMeManager(SimpleCookie rememberMeCookie) {
+		CookieRememberMeManager cookieRememberMeManager = new CookieRememberMeManager();
+		cookieRememberMeManager.setCipherKey(Base64.decode("4AvVhmFLUs0KTA3Kprsdag=="));
+		cookieRememberMeManager.setCookie(rememberMeCookie);
+		return cookieRememberMeManager;
 	}
 	
 	/**
@@ -149,11 +173,13 @@ public class ShiroConfig {
 	public DefaultWebSecurityManager securityManager(
 			UserRealm userRealm,
 			DefaultWebSessionManager sessionManager,
-			EhCacheManager cacheManager) {
+			EhCacheManager cacheManager,
+			CookieRememberMeManager rememberMeManager) {
 		DefaultWebSecurityManager defaultWebSecurityManager = new DefaultWebSecurityManager();
 		defaultWebSecurityManager.setRealm(userRealm);
 		defaultWebSecurityManager.setSessionManager(sessionManager);
 		defaultWebSecurityManager.setCacheManager(cacheManager);
+		defaultWebSecurityManager.setRememberMeManager(rememberMeManager);
 		return defaultWebSecurityManager;
 	}
 	
@@ -177,6 +203,10 @@ public class ShiroConfig {
 		formAuthenticationFilter.setUsernameParam("username");
 		formAuthenticationFilter.setPasswordParam("password");
 		formAuthenticationFilter.setLoginUrl("/test/login");
+		//登录失败后存储到的Attribute属性名
+		formAuthenticationFilter.setFailureKeyAttribute("shiroLoginFailure");
+		//设置rememberMe请求参数名
+		formAuthenticationFilter.setRememberMeParam("rememberMe");
 		return formAuthenticationFilter;
 	}
 	
@@ -198,7 +228,10 @@ public class ShiroConfig {
 		chainMap.put("/test/index", "anon");
 		chainMap.put("/test/unauthorized", "anon");
 		chainMap.put("/test/login", "authc");
+		//authc表示访问该地址用户必须身份验证通过[Subject.isAuthenticated()==true]
+		chainMap.put("/test/testfm", "authc");	
 		chainMap.put("/logout", "logout");
+		//表示访问该地址的用户是身份验证通过或 RememberMe 登录的都可以
 		chainMap.put("/**", "user");
 		shiroFilterFactoryBean.setFilterChainDefinitionMap(chainMap);
 		return shiroFilterFactoryBean;
