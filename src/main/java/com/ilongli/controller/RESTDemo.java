@@ -7,9 +7,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.ExcessiveAttemptsException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,38 +41,23 @@ public class RESTDemo {
 	
 	
 	@RequestMapping("testfm")
-	public String testfm(Map<String,Object> map) {
-		map.put("user", "ilongli");
+	public String testfm(Model model) {
+		model.addAttribute("user", "ilongli");
 		return "testfm";
 	}
 	
-	@RequestMapping("index")
-	public String index() {
-		return "index";
-	}
-	
-	@RequestMapping("login")
-	public String login(HttpServletRequest req, Map<String,Object> map,
-			@RequestParam(value = "kickout", required = false) String kickout) {
-		String exceptionClassName = (String)req.getAttribute("shiroLoginFailure");
-		String error = null;
-		if(ExcessiveAttemptsException.class.getName().equals(exceptionClassName)) {
-			error = "你已重复尝试超过5次，请1个小时之后重试。";
-		}else if(UnknownAccountException.class.getName().equals(exceptionClassName)) {
-			error = "用户名/密码错误";
-		} else if(IncorrectCredentialsException.class.getName().equals(exceptionClassName)) {
-            error = "用户名/密码错误";
-        } else if(exceptionClassName != null) {
-            error = "其他错误：" + exceptionClassName;
-        } else if (kickout != null) {
-        	error = "您被踢出登录！";
-        }
-		map.put("error", error);
-		return "login";
-	}
-	
-	@RequestMapping("unauthorized")
-	public String unauthorized() {
-		return "unauthorized";
-	}
+	/**
+	 * test
+	 */
+    @RequestMapping("/hello1")
+    public String hello1() {
+        SecurityUtils.getSubject().checkRole("admin");
+        return "success";
+    }
+
+    @RequiresRoles("admin")
+    @RequestMapping("/hello2")
+    public String hello2() {
+        return "success";
+    }
 }

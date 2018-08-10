@@ -9,7 +9,7 @@ import org.springframework.web.filter.DelegatingFilterProxy;
 @WebFilter(filterName="shiroFilter", urlPatterns="/*", initParams={
 	@WebInitParam(name="targetFilterLifecycle", value="true")
 },asyncSupported=true)
-@Order(value = 1)
+@Order(1)
 public class ShiroFilter extends DelegatingFilterProxy {
 
 }

@@ -16,7 +16,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.core.annotation.Order;
 
 @WebFilter(filterName="projectFilter", urlPatterns={ "/*" })
-@Order(value = 2)
+@Order(2)
 public class ProjectFilter implements Filter {
 
 	private static final Logger LOGGER = LogManager.getLogger(ProjectFilter.class);

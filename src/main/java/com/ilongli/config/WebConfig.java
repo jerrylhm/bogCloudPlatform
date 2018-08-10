@@ -17,6 +17,7 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -28,6 +29,7 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.ilongli.utils.PropertiesUtil;
 import com.ilongli.web.interceptor.MyInterceptor;
+import com.ilongli.web.resolver.CurrentUserMethodArgumentResolver;
 
 /**
  * springmvc配置类
@@ -135,6 +137,14 @@ public class WebConfig extends WebMvcConfigurationSupport {
 	@Override
 	protected void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(new MyInterceptor()).addPathPatterns("/hello1");	
+	}
+	
+	/**
+	 * 添加
+	 */
+	@Override
+	protected void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+		argumentResolvers.add(new CurrentUserMethodArgumentResolver());
 	}
 	
 	/**

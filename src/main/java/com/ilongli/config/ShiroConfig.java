@@ -13,7 +13,6 @@ import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
 import org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
-import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
 import org.apache.shiro.web.mgt.CookieRememberMeManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
@@ -24,6 +23,9 @@ import org.springframework.context.annotation.Configuration;
 
 import com.ilongli.service.UserService;
 import com.ilongli.shiro.credentials.RetryLimitHashedCredentialsMatcher;
+import com.ilongli.shiro.filter.JCaptchaValidateFilter;
+import com.ilongli.shiro.filter.MyFormAuthenticationFilter;
+import com.ilongli.shiro.filter.SysUserFilter;
 import com.ilongli.shiro.realm.UserRealm;
 
 /**
@@ -140,7 +142,7 @@ public class ShiroConfig {
 		//quartzSessionValidationScheduler.setSessionManager(sessionManager);
 		return quartzSessionValidationScheduler;
 	}*/
-	@Bean(name = "sessionValidationScheduler")
+	@Bean
 	public ExecutorServiceSessionValidationScheduler sessionValidationScheduler() {
 		ExecutorServiceSessionValidationScheduler scheduler = new ExecutorServiceSessionValidationScheduler();
 		scheduler.setInterval(1800000);
@@ -198,16 +200,36 @@ public class ShiroConfig {
 	 * 基于Form表单的身份验证过滤器
 	 */
 	@Bean
-	public FormAuthenticationFilter formAuthenticationFilter() {
-		FormAuthenticationFilter formAuthenticationFilter = new FormAuthenticationFilter();
-		formAuthenticationFilter.setUsernameParam("username");
-		formAuthenticationFilter.setPasswordParam("password");
-		formAuthenticationFilter.setLoginUrl("/test/login");
+	public MyFormAuthenticationFilter authcFilter() {
+		MyFormAuthenticationFilter authcFilter = new MyFormAuthenticationFilter();
+		authcFilter.setUsernameParam("username");
+		authcFilter.setPasswordParam("password");
+/*		authcFilter.setLoginUrl("/login");*/
 		//登录失败后存储到的Attribute属性名
-		formAuthenticationFilter.setFailureKeyAttribute("shiroLoginFailure");
+		authcFilter.setFailureKeyAttribute("shiroLoginFailure");
 		//设置rememberMe请求参数名
-		formAuthenticationFilter.setRememberMeParam("rememberMe");
-		return formAuthenticationFilter;
+		authcFilter.setRememberMeParam("rememberMe");
+		return authcFilter;
+	}
+	
+	/**
+	 * 系统用户过滤器，将登录的用户信息放入到session中
+	 */
+	@Bean
+	public SysUserFilter sysUserFilter() {
+		return new SysUserFilter();
+	}
+	
+	/**
+	 * 验证码过滤器
+	 */
+	@Bean
+	public JCaptchaValidateFilter jCaptchaValidateFilter() {
+		JCaptchaValidateFilter jCaptchaValidateFilter = new JCaptchaValidateFilter();
+		jCaptchaValidateFilter.setJcaptchaEbabled(true);
+		jCaptchaValidateFilter.setJcaptchaParam("jcaptchaCode");
+		jCaptchaValidateFilter.setFailureKeyAttribute("shiroLoginFailure");
+		return jCaptchaValidateFilter;
 	}
 	
 	/**
@@ -216,23 +238,31 @@ public class ShiroConfig {
 	@Bean
 	public ShiroFilterFactoryBean shiroFilter(
 			DefaultWebSecurityManager securityManager,
-			FormAuthenticationFilter formAuthenticationFilter) {
+			MyFormAuthenticationFilter authcFilter,
+			SysUserFilter sysUserFilter,
+			JCaptchaValidateFilter jCaptchaValidateFilter) {
 		ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
 		shiroFilterFactoryBean.setSecurityManager(securityManager);
-		shiroFilterFactoryBean.setLoginUrl("/test/login");
-		shiroFilterFactoryBean.setUnauthorizedUrl("/test/unauthorized");
+		shiroFilterFactoryBean.setLoginUrl("/login");
+		shiroFilterFactoryBean.setUnauthorizedUrl("/unauthorized");
+		
 		HashMap<String, Filter> filters = new HashMap<String, Filter>();
-		filters.put("authc", formAuthenticationFilter);
+		filters.put("authc", authcFilter);
+		filters.put("sysUser", sysUserFilter);
+		filters.put("jCaptchaValidate", jCaptchaValidateFilter);
 		shiroFilterFactoryBean.setFilters(filters);
+		
 		Map<String, String> chainMap = new LinkedHashMap<String, String>();
-		chainMap.put("/test/index", "anon");
-		chainMap.put("/test/unauthorized", "anon");
-		chainMap.put("/test/login", "authc");
+		chainMap.put("/index", "anon");
+		chainMap.put("/unauthorized", "anon");
+		chainMap.put("/login", "authc,jCaptchaValidate");
+		chainMap.put("/jcaptcha*", "authc");
+		chainMap.put("/js/*", "anon");
 		//authc表示访问该地址用户必须身份验证通过[Subject.isAuthenticated()==true]
 		chainMap.put("/test/testfm", "authc");	
 		chainMap.put("/logout", "logout");
 		//表示访问该地址的用户是身份验证通过或 RememberMe 登录的都可以
-		chainMap.put("/**", "user");
+		chainMap.put("/**", "user,sysUser");
 		shiroFilterFactoryBean.setFilterChainDefinitionMap(chainMap);
 		return shiroFilterFactoryBean;
 	}
