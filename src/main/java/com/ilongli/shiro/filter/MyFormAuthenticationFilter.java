@@ -1,9 +1,9 @@
 package com.ilongli.shiro.filter;
 
-import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
-
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+
+import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
 
 public class MyFormAuthenticationFilter extends FormAuthenticationFilter {
 

@@ -25,15 +25,15 @@ public class IndexController {
 		String exceptionClassName = (String)req.getAttribute("shiroLoginFailure");
 		String error = null;
 		if(ExcessiveAttemptsException.class.getName().equals(exceptionClassName)) {
-			error = "你已重复尝试超过5次，请1个小时之后重试。";
+			error = "你已重复尝试超过5次，请1个小时之后重试";
 		}else if(UnknownAccountException.class.getName().equals(exceptionClassName)) {
-			error = "用户名/密码错误";
+			error = "用户不存在";
 		} else if(IncorrectCredentialsException.class.getName().equals(exceptionClassName)) {
             error = "用户名/密码错误";
         } else if(exceptionClassName != null) {
-            error = "其他错误：" + exceptionClassName;
+            error = exceptionClassName;
         } else if (kickout != null) {
-        	error = "您被踢出登录！";
+        	error = "您被踢出登录";
         }
 		model.addAttribute("error", error);
 		return "login";

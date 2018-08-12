@@ -16,6 +16,7 @@ public class JCaptcha {
         boolean validated = false;
         try {
             String id = request.getSession().getId();
+            System.out.println("validate session-id : " + id);
             validated = captchaService.validateResponseForID(id, userCaptchaResponse).booleanValue();
         } catch (CaptchaServiceException e) {
             e.printStackTrace();

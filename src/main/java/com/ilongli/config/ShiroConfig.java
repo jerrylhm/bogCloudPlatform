@@ -11,12 +11,14 @@ import org.apache.shiro.codec.Base64;
 import org.apache.shiro.session.mgt.ExecutorServiceSessionValidationScheduler;
 import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
 import org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator;
+import org.apache.shiro.session.mgt.quartz.QuartzSessionValidationScheduler;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.CookieRememberMeManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
+import org.apache.shiro.web.session.mgt.ServletContainerSessionManager;
 import org.springframework.beans.factory.config.MethodInvokingFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -64,28 +66,23 @@ public class ShiroConfig {
 	@Bean
 	public UserRealm userRealm(UserService userService, RetryLimitHashedCredentialsMatcher credentialsMatcher) {
 		UserRealm userRealm = new UserRealm();
-		//TODO
-		//userService?
 		userRealm.setCredentialsMatcher(credentialsMatcher);
-		userRealm.setCachingEnabled(true);
-		userRealm.setAuthenticationCacheName("authenticationCache");
-		userRealm.setAuthorizationCachingEnabled(true);
-		userRealm.setAuthorizationCacheName("authorizationCache");
+		userRealm.setCachingEnabled(false);
 		return userRealm;
 	}
 	
 	/**
 	 * 配置会话ID生成器
 	 */
-	@Bean
+/*	@Bean
 	public JavaUuidSessionIdGenerator sessionIdGenerator() {
 		return new JavaUuidSessionIdGenerator();
-	}
+	}*/
 	
 	/**
 	 * 配置会话Cookie模板
 	 */
-	@Bean
+/*	@Bean
 	public SimpleCookie sessionIdCookie() {
 		//这里相当于配置：<constructor-arg value="sid"/>
 		SimpleCookie simpleCookie = new SimpleCookie("sid");
@@ -93,7 +90,7 @@ public class ShiroConfig {
 		simpleCookie.setHttpOnly(true);
 		simpleCookie.setMaxAge(-1);	//-1表示浏览器关闭时失效此Cookie
 		return simpleCookie;
-	}
+	}*/
 	
 	/**
 	 * 配置记住我功能Cookie
@@ -120,13 +117,13 @@ public class ShiroConfig {
 	/**
 	 * 配置会话DAO
 	 */
-	@Bean
+/*	@Bean
 	public EnterpriseCacheSessionDAO sessionDAO(JavaUuidSessionIdGenerator sessionIdGenerator) {
 		EnterpriseCacheSessionDAO enterpriseCacheSessionDAO = new EnterpriseCacheSessionDAO();
 		enterpriseCacheSessionDAO.setActiveSessionsCacheName("shiro-activeSessionCache");
 		enterpriseCacheSessionDAO.setSessionIdGenerator(sessionIdGenerator);
 		return enterpriseCacheSessionDAO;
-	}
+	}*/
 	
 	/**
 	 * 配置会话验证调度器
@@ -136,23 +133,29 @@ public class ShiroConfig {
 	 * 参考：http://www.60kb.com/post/15.html
 	 */
 /*	@Bean
-	public QuartzSessionValidationScheduler sessionValidationScheduler() {
+	public QuartzSessionValidationScheduler sessionValidationScheduler(DefaultWebSessionManager sessionManager) {
 		QuartzSessionValidationScheduler quartzSessionValidationScheduler = new QuartzSessionValidationScheduler();
 		quartzSessionValidationScheduler.setSessionValidationInterval(1800000);
-		//quartzSessionValidationScheduler.setSessionManager(sessionManager);
+		quartzSessionValidationScheduler.setSessionManager(sessionManager);
 		return quartzSessionValidationScheduler;
 	}*/
-	@Bean
+/*	
+ 	@Bean
 	public ExecutorServiceSessionValidationScheduler sessionValidationScheduler() {
 		ExecutorServiceSessionValidationScheduler scheduler = new ExecutorServiceSessionValidationScheduler();
 		scheduler.setInterval(1800000);
 		return scheduler;
-	}
+	}*/
 	
 	/**
 	 * 配置会话管理器
 	 */
-	@Bean
+	/**
+	 * 由于使用shiro的DefaultWebSessionManager的会话管理不能替换Web容器的会话管理，
+	 * 导致各种bug频繁出现，这里暂时使用默认的Web会话管理，以后再做研究
+	 * 以后考虑直接将session存入redis进行管理
+	 */
+/*	@Bean
 	public DefaultWebSessionManager sessionManager(
 			ExecutorServiceSessionValidationScheduler sessionValidationScheduler,
 			EnterpriseCacheSessionDAO sessionDAO,
@@ -160,13 +163,18 @@ public class ShiroConfig {
 		DefaultWebSessionManager defaultWebSessionManager = new DefaultWebSessionManager();
 		defaultWebSessionManager.setGlobalSessionTimeout(1800000);
 		defaultWebSessionManager.setDeleteInvalidSessions(true);
+		
+		defaultWebSessionManager.setSessionIdUrlRewritingEnabled(false);
+		
 		defaultWebSessionManager.setSessionValidationSchedulerEnabled(true);
-		defaultWebSessionManager.setSessionValidationScheduler(sessionValidationScheduler);
+//		defaultWebSessionManager.setSessionValidationScheduler(sessionValidationScheduler);
+		
 		defaultWebSessionManager.setSessionDAO(sessionDAO);
+		
 		defaultWebSessionManager.setSessionIdCookieEnabled(true);
-		defaultWebSessionManager.setSessionIdCookie(sessionIdCookie);
+		defaultWebSessionManager.setSessionIdCookie(sessionIdCookie());
 		return defaultWebSessionManager;
-	}
+	}*/
 	
 	/**
 	 * 配置安全管理器
@@ -174,12 +182,11 @@ public class ShiroConfig {
 	@Bean
 	public DefaultWebSecurityManager securityManager(
 			UserRealm userRealm,
-			DefaultWebSessionManager sessionManager,
 			EhCacheManager cacheManager,
 			CookieRememberMeManager rememberMeManager) {
 		DefaultWebSecurityManager defaultWebSecurityManager = new DefaultWebSecurityManager();
 		defaultWebSecurityManager.setRealm(userRealm);
-		defaultWebSecurityManager.setSessionManager(sessionManager);
+		/*defaultWebSecurityManager.setSessionManager(sessionManager);*/
 		defaultWebSecurityManager.setCacheManager(cacheManager);
 		defaultWebSecurityManager.setRememberMeManager(rememberMeManager);
 		return defaultWebSecurityManager;
@@ -204,7 +211,6 @@ public class ShiroConfig {
 		MyFormAuthenticationFilter authcFilter = new MyFormAuthenticationFilter();
 		authcFilter.setUsernameParam("username");
 		authcFilter.setPasswordParam("password");
-/*		authcFilter.setLoginUrl("/login");*/
 		//登录失败后存储到的Attribute属性名
 		authcFilter.setFailureKeyAttribute("shiroLoginFailure");
 		//设置rememberMe请求参数名
@@ -255,8 +261,8 @@ public class ShiroConfig {
 		Map<String, String> chainMap = new LinkedHashMap<String, String>();
 		chainMap.put("/index", "anon");
 		chainMap.put("/unauthorized", "anon");
-		chainMap.put("/login", "authc,jCaptchaValidate");
-		chainMap.put("/jcaptcha*", "authc");
+		chainMap.put("/login", "jCaptchaValidate,authc");
+		chainMap.put("/jcaptcha*", "anon");
 		chainMap.put("/js/*", "anon");
 		//authc表示访问该地址用户必须身份验证通过[Subject.isAuthenticated()==true]
 		chainMap.put("/test/testfm", "authc");	
@@ -264,6 +270,7 @@ public class ShiroConfig {
 		//表示访问该地址的用户是身份验证通过或 RememberMe 登录的都可以
 		chainMap.put("/**", "user,sysUser");
 		shiroFilterFactoryBean.setFilterChainDefinitionMap(chainMap);
+		
 		return shiroFilterFactoryBean;
 	}
 	
