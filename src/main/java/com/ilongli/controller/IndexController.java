@@ -53,7 +53,7 @@ public class IndexController {
 	 */
 	@RequestMapping("*")
 	public String noHandlerFound() {
-		return "404";
+		return "error/error_404";
 	}
 	
 	/**

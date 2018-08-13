@@ -1,23 +1,16 @@
 package com.ilongli.controller;
 
-import java.util.Map;
-
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.ExcessiveAttemptsException;
-import org.apache.shiro.authc.IncorrectCredentialsException;
-import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ilongli.service.UserService;
@@ -46,6 +39,13 @@ public class RESTDemo {
 		return "testfm";
 	}
 	
+	@RequestMapping("teste")
+	public String testfm() {
+		//Throw Exception
+		int i = 1/0;
+		return "test";
+	}
+	
 	/**
 	 * test
 	 */
@@ -60,4 +60,6 @@ public class RESTDemo {
     public String hello2() {
         return "success";
     }
+    
+    
 }

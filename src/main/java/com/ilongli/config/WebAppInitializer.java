@@ -1,5 +1,8 @@
 package com.ilongli.config;
 
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.servlet.DispatcherServlet;
+import org.springframework.web.servlet.FrameworkServlet;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 /**
@@ -36,5 +39,7 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
     	//将DispatcherServlet映射到"/"
         return new String [] {"/"};  
     } 
+    
+
     
 }
