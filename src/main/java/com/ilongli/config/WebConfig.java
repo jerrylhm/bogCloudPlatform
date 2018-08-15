@@ -140,7 +140,7 @@ public class WebConfig extends WebMvcConfigurationSupport {
 	}
 	
 	/**
-	 * 添加
+	 * 添加参数解析器
 	 */
 	@Override
 	protected void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {

@@ -1,4 +1,4 @@
-package com.ilongli.web.filter;
+/*package com.ilongli.web.filter;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -11,13 +11,12 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.logging.log4j.core.config.Order;
+import org.springframework.core.annotation.Order;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.ilongli.jcaptcha.JCaptcha;
 
-@WebFilter(filterName = "JCaptchaFilter", urlPatterns = "/jcaptcha.jpg", asyncSupported=true)
-@Order(2)
+@WebFilter(filterName = "tJCaptchaFilter", urlPatterns = "/jcaptcha.jpg", asyncSupported=true)
 public class JCaptchaFilter extends OncePerRequestFilter {
 
     @Override
@@ -45,3 +44,4 @@ public class JCaptchaFilter extends OncePerRequestFilter {
 
 
 }
+*/

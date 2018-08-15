@@ -11,6 +11,7 @@ public class MyInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
         System.out.println("preHandle被调用");
+        System.out.println("拦截器 : " + httpServletRequest.getSession().getId());
         return true;    //如果false，停止流程，api被拦截
     }
 
