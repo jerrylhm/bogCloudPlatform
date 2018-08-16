@@ -26,6 +26,7 @@
 		<apache-log4j.version>2.11.1</apache-log4j.version>
 		<shiro.version>1.4.0</shiro.version>
 		<captcha.version>1.0</captcha.version>
+		<redis.version>2.9.0</redis.version>
 	</properties>
 
 	<!-- 依赖注入 -->
@@ -86,6 +87,14 @@
 			<artifactId>jcaptcha</artifactId>
 			<version>${captcha.version}</version>
 		</dependency>
+		
+		<!-- redis.clients/jedis -->
+		<dependency>
+		    <groupId>redis.clients</groupId>
+		    <artifactId>jedis</artifactId>
+		    <version>${redis.version}</version>
+		</dependency>
+		
 
 		<!-- apache log4j -->
 		<dependency>
@@ -176,6 +185,12 @@
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-jpa</artifactId>
+			<version>${spring-data.version}</version>
+		</dependency>
+		<!-- spring-data-redis -->
+		<dependency>
+		    <groupId>org.springframework.data</groupId>
+		    <artifactId>spring-data-redis</artifactId>
 			<version>${spring-data.version}</version>
 		</dependency>
 		<!-- ***** spring相关依赖结束 ***** -->

@@ -9,7 +9,6 @@ import javax.servlet.Filter;
 import org.apache.shiro.cache.ehcache.EhCacheManager;
 import org.apache.shiro.codec.Base64;
 import org.apache.shiro.session.mgt.ExecutorServiceSessionValidationScheduler;
-import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
 import org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
@@ -22,6 +21,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.ilongli.service.UserService;
+import com.ilongli.shiro.MySessionDAO;
 import com.ilongli.shiro.credentials.RetryLimitHashedCredentialsMatcher;
 import com.ilongli.shiro.filter.JCaptchaValidateFilter;
 import com.ilongli.shiro.filter.MyFormAuthenticationFilter;
@@ -66,6 +66,12 @@ public class ShiroConfig {
 		UserRealm userRealm = new UserRealm();
 		userRealm.setCredentialsMatcher(credentialsMatcher);
 		userRealm.setCachingEnabled(false);
+		
+		/** 这里无需再做登录认证和身份认证的缓存，因为druid已经对所有的sql语句做了缓存处理 **/
+/*		userRealm.setAuthenticationCachingEnabled(true);
+		userRealm.setAuthenticationCacheName("authenticationCache");
+		userRealm.setAuthorizationCachingEnabled(true);
+		userRealm.setAuthorizationCacheName("authorizationCache");*/
 		return userRealm;
 	}
 	
@@ -78,7 +84,7 @@ public class ShiroConfig {
 	}
 	
 	/**
-	 * 配置会话Cookie模板
+	 * 配置session会话Cookie
 	 */
 	@Bean
 	public SimpleCookie sessionIdCookie() {
@@ -112,22 +118,22 @@ public class ShiroConfig {
 	}
 	
 	/**
-	 * 配置会话DAO
+	 * 配置session会话DAO
 	 */
-	@Bean
+/*	@Bean
 	public EnterpriseCacheSessionDAO sessionDAO(JavaUuidSessionIdGenerator sessionIdGenerator) {
 		EnterpriseCacheSessionDAO enterpriseCacheSessionDAO = new EnterpriseCacheSessionDAO();
 		enterpriseCacheSessionDAO.setActiveSessionsCacheName("shiro-activeSessionCache");
 		enterpriseCacheSessionDAO.setSessionIdGenerator(sessionIdGenerator);
 		return enterpriseCacheSessionDAO;
-	}
-/*	@Bean
+	}*/
+	@Bean
 	public MySessionDAO sessionDAO(JavaUuidSessionIdGenerator sessionIdGenerator) {
 		MySessionDAO sessionDAO = new MySessionDAO();
 		sessionDAO.setActiveSessionsCacheName("shiro-activeSessionCache");
 		sessionDAO.setSessionIdGenerator(sessionIdGenerator);
 		return sessionDAO;
-	}*/
+	}
 	
 	/**
 	 * 配置会话验证调度器
@@ -157,17 +163,23 @@ public class ShiroConfig {
 	/**
 	 * 采用shiro自带的DefaultWebSessionManager作为session管理器
 	 * 以后考虑直接将session存入redis进行管理
-	 * 注意，这里配置了sessionManager，并且在securityManager注入后，
+	 *	注意，这里配置了sessionManager，并且在securityManager注入后，
 	 * 	因为@WebFilter无法确定顺序，因此配置的webFilter无法确保在shiroFilter的后面，
 	 * 	无法确保webFilter的request是被shiroFilter所封装过的，即在webFilter获取的session
 	 * 	无法确保是该sessionManager所生成的。
-	 * 	因此获取验证码不是通过过滤器返回，而是通过Controller获取。
+	 *有两种方法解决：
+	 * 	1、通过Controller获取验证码，因为能够确保进入控制器方法的request是经shiro封装过的。
+	 * 	2、给所有过滤器加上"Filter[x]"，x为编号，因为@WebFilter所定义的多个过滤器是根据类名的自然
+	 * 		顺序执行的，因此只要给shiro的过滤器类起名如"Filter0_ShiroFilter"，而其他过滤器则从
+	 * 		"Filter1_xxx"起名，就能确保shiro的过滤器在其他过滤器之前所执行，自然传入其他过滤器的
+	 * 		request是被shiro所封装过的。
+	 * 		参考：https://blog.csdn.net/liming_0820/article/details/53332070
 	 */
 	@Bean
 	public DefaultWebSessionManager sessionManager(
 			ExecutorServiceSessionValidationScheduler sessionValidationScheduler,
-			SimpleCookie sessionIdCookie,
-			EnterpriseCacheSessionDAO sessionDAO) {
+			MySessionDAO sessionDAO,
+			SimpleCookie sessionIdCookie) {
 		DefaultWebSessionManager defaultWebSessionManager = new DefaultWebSessionManager();
 		defaultWebSessionManager.setGlobalSessionTimeout(1800000);
 		defaultWebSessionManager.setDeleteInvalidSessions(true);
@@ -268,16 +280,17 @@ public class ShiroConfig {
 		shiroFilterFactoryBean.setFilters(filters);
 		
 		Map<String, String> chainMap = new LinkedHashMap<String, String>();
-		chainMap.put("/index", "anon");
+		//anon表示无需验证
+		chainMap.put("/static/**", "anon");
 		chainMap.put("/favicon.ico", "anon");
+		chainMap.put("/index", "anon");
 		chainMap.put("/unauthorized", "anon");
-		chainMap.put("/login", "jCaptchaValidate,authc");
 		chainMap.put("/jcaptcha*", "anon");
-		chainMap.put("/js/**", "anon");
 		//authc表示访问该地址用户必须身份验证通过[Subject.isAuthenticated()==true]
+		chainMap.put("/login", "jCaptchaValidate,authc");
 		chainMap.put("/test/testfm", "authc");	
 		chainMap.put("/logout", "logout");
-		//表示访问该地址的用户是身份验证通过或 RememberMe 登录的都可以
+		//user表示访问该地址的用户是身份验证通过或 RememberMe登录的都可以
 		chainMap.put("/**", "user,sysUser");
 		shiroFilterFactoryBean.setFilterChainDefinitionMap(chainMap);
 		

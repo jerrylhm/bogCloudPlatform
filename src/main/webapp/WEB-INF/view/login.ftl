@@ -16,7 +16,7 @@
 	<input type="submit" value="登录">
 	记住我：<input type="checkbox" name="rememberMe" value="true">
 </form>
-<script src="/js/jquery-3.3.1.min.js"></script>
+<script src="/static/js/jquery-3.3.1.min.js"></script>
 <script>
     $(function() {
         $(".jcaptcha-btn").click(function() {

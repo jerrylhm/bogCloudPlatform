@@ -13,24 +13,27 @@
 		statistics="true">
     </cache>
 
-    <cache name="authorizationCache"
+	<!-- 身份验证缓存 -->
+<!--     <cache name="authorizationCache"
 		maxEntriesLocalHeap="2000"
 		eternal="false"
 		timeToIdleSeconds="3600"
 		timeToLiveSeconds="0"
 		overflowToDisk="false"
 		statistics="true">
-    </cache>
+    </cache> -->
 
-    <cache name="authenticationCache"
+	<!-- 登录缓存 -->
+<!--     <cache name="authenticationCache"
 		maxEntriesLocalHeap="2000"
 		eternal="false"
 		timeToIdleSeconds="3600"
 		timeToLiveSeconds="0"
 		overflowToDisk="false"
 		statistics="true">
-    </cache>
+    </cache> -->
 
+	<!-- shiro-session缓存(非session失效时间，只是缓存) -->
     <cache name="shiro-activeSessionCache"
            maxEntriesLocalHeap="2000"
            eternal="false"
@@ -40,6 +43,7 @@
            statistics="true">
     </cache>
     
+    <!-- 踢出会话的缓存 -->
 	<cache name="shiro-kickout-session"
 		maxEntriesLocalHeap="2000"
 		eternal="false"

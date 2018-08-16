@@ -22,6 +22,9 @@ public class UserRealm extends AuthorizingRealm {
 	@Resource
 	private UserService userService;
 
+	/**
+	 * shiro的身份认证
+	 */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         String username = (String)principals.getPrimaryPrincipal();
@@ -33,6 +36,9 @@ public class UserRealm extends AuthorizingRealm {
         return authorizationInfo;
     }
 
+    /**
+     * shiro的登录认证
+     */
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         String username = (String)token.getPrincipal();

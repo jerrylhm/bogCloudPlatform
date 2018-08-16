@@ -1,13 +1,6 @@
 package com.ilongli.controller;
 
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.authc.ExcessiveAttemptsException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
@@ -18,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.ilongli.entity.User;
-import com.ilongli.jcaptcha.JCaptcha;
 import com.ilongli.web.annotation.CurrentUser;
 
 @Controller
@@ -65,7 +57,7 @@ public class IndexController {
 	}
 	
 	/**
-	 * 没有权限返回页面
+	 * 没有权限返回页面 
 	 */
 	@RequestMapping("unauthorized")
 	public String unauthorized() {
@@ -73,9 +65,9 @@ public class IndexController {
 	}
 	
 	/**
-	 * 获取验证码
+	 * JCaptcha获取验证码(Controller方式)
 	 */
-	@RequestMapping("jcaptcha.jpg")
+/*	@RequestMapping("jcaptcha.jpg")
 	public void jcaptcha(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setDateHeader("Expires", 0L);
         response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
@@ -95,5 +87,5 @@ public class IndexController {
         } finally {
             out.close();
         }
-	}
+	}*/
 }
