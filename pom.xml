@@ -27,6 +27,7 @@
 		<shiro.version>1.4.0</shiro.version>
 		<captcha.version>1.0</captcha.version>
 		<redis.version>2.9.0</redis.version>
+		<fasterxml.version>2.9.6</fasterxml.version>
 	</properties>
 
 	<!-- 依赖注入 -->
@@ -94,7 +95,6 @@
 		    <artifactId>jedis</artifactId>
 		    <version>${redis.version}</version>
 		</dependency>
-		
 
 		<!-- apache log4j -->
 		<dependency>
@@ -112,6 +112,14 @@
 			<artifactId>log4j-web</artifactId>
 			<version>${apache-log4j.version}</version>
 		</dependency>
+		
+		<!-- jackson-databind -->
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-databind</artifactId>
+		    <version>${fasterxml.version}</version>
+		</dependency>
+		
 
 		<!-- ##### shiro相关依赖开始 ##### -->
 		<dependency>
