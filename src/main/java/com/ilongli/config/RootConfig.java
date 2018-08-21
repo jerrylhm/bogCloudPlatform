@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
  *
  */
 @Configuration  
-@ComponentScan(basePackages={"com.ilongli.service", "com.ilongli.web.exception"}) 
+@ComponentScan(basePackages={"com.ilongli.service", "com.ilongli.web.exception", "com.ilongli.utils"}) 
 public class RootConfig {
 	
 }

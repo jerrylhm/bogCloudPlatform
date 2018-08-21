@@ -130,7 +130,7 @@ public class ShiroConfig {
 	@Bean
 	public MySessionDAO sessionDAO(JavaUuidSessionIdGenerator sessionIdGenerator) {
 		MySessionDAO sessionDAO = new MySessionDAO();
-		sessionDAO.setActiveSessionsCacheName("shiro-activeSessionCache");
+//		sessionDAO.setActiveSessionsCacheName("shiro-activeSessionCache");
 		sessionDAO.setSessionIdGenerator(sessionIdGenerator);
 		return sessionDAO;
 	}
