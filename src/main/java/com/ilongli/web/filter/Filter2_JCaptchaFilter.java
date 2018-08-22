@@ -20,7 +20,7 @@ import com.ilongli.jcaptcha.JCaptcha;
  * @author ilongli
  *
  */
-@WebFilter(filterName = "tJCaptchaFilter", urlPatterns = "/jcaptcha.jpg", asyncSupported=true)
+@WebFilter(filterName = "tJCaptchaFilter", urlPatterns = "/jcaptcha", asyncSupported=true)
 public class Filter2_JCaptchaFilter extends OncePerRequestFilter {
 
     @Override
