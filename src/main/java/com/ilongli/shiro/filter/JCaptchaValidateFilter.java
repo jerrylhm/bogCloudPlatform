@@ -41,17 +41,20 @@ public class JCaptchaValidateFilter extends AccessControlFilter {
             return true;
         }
         
-        System.out.println("session-id : " + httpServletRequest.getSession().getId());
-        
         System.out.println("验证码 : " + httpServletRequest.getParameter(jcaptchaParam));
         
         //3、此时是表单提交，验证验证码是否正确
-        return JCaptcha.validateResponse(httpServletRequest, httpServletRequest.getParameter(jcaptchaParam));
+        int result = JCaptcha.validateResponse(httpServletRequest, httpServletRequest.getParameter(jcaptchaParam));
+        if(result != 1) {
+        	request.setAttribute(failureKeyAttribute, result==0?"验证码过期":"验证码错误");
+        }
+        return true;
     }
+    
     @Override
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
-        //如果验证码失败了，存储失败key属性
-        request.setAttribute(failureKeyAttribute, "验证码错误");
+//        //如果验证码失败了，存储失败key属性
+//        request.setAttribute(failureKeyAttribute, "验证码错误");
         return true;
     }
 }

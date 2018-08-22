@@ -1,3 +1,4 @@
+<#assign base=rc.contextPath />
 <html>
 <head>
     <title>登录</title>
@@ -10,17 +11,17 @@
 	用户名：<input type="text" name="username"><br/>
 	密码：<input type="password" name="password"><br/>
 	验证码：<input type="text" name="jcaptchaCode">
-	<img class="jcaptcha-btn jcaptcha-img" src="/jcaptcha.jpg" title="点击更换验证码">
+	<img class="jcaptcha-btn jcaptcha-img" src="${base}/jcaptcha.jpg" title="点击更换验证码">
 	<a class="jcaptcha-btn" href="javascript:void(0);">换一张</a>
 	<br/>
 	<input type="submit" value="登录">
 	记住我：<input type="checkbox" name="rememberMe" value="true">
 </form>
-<script src="/static/js/jquery-3.3.1.min.js"></script>
+<script src="${base}/static/js/jquery-3.3.1.min.js"></script>
 <script>
     $(function() {
         $(".jcaptcha-btn").click(function() {
-            $(".jcaptcha-img").attr("src", '/jcaptcha.jpg?'+new Date().getTime());
+            $(".jcaptcha-img").attr("src", '${base}/jcaptcha.jpg?'+new Date().getTime());
         });
     });
 </script>

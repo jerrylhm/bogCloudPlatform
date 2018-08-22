@@ -65,6 +65,7 @@ public class MySessionDAO extends AbstractSessionDAO {
 	@Override
 	protected Serializable doCreate(Session session) {
 		Serializable sessionId = this.generateSessionId(session);
+		System.out.println("doCreate the session: " + sessionId);
 		this.assignSessionId(session, sessionId);
 		this.saveSession(session);
 		return sessionId;
@@ -88,7 +89,7 @@ public class MySessionDAO extends AbstractSessionDAO {
 			return;
 		}
 		session.setTimeout(EXPIRE_TIME);
-		RedisUtil.valueSet(KEY_PREFIX+session.getId(), session, EXPIRE_TIME, TimeUnit.SECONDS);
+		RedisUtil.valueSet(KEY_PREFIX+session.getId(), session, EXPIRE_TIME, TimeUnit.MILLISECONDS);
 	}
 }
 

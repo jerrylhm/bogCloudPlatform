@@ -9,9 +9,14 @@ public class JCaptcha {
     public static final MyManageableImageCaptchaService captchaService
             = new MyManageableImageCaptchaService(new FastHashMapCaptchaStore(), new GMailEngine(), 180, 100000, 75000);
 
-
-    public static boolean validateResponse(HttpServletRequest request, String userCaptchaResponse) {
-        if (request.getSession(false) == null) return false;
+    /**
+     * validate the code
+     * @param request
+     * @param userCaptchaResponse
+     * @return 0：验证码过期；1：验证码正确；2：验证码错误
+     */
+    public static int validateResponse(HttpServletRequest request, String userCaptchaResponse) {
+        if (request.getSession(false) == null) return 0;
 
         boolean validated = false;
         try {
@@ -21,7 +26,8 @@ public class JCaptcha {
         } catch (CaptchaServiceException e) {
             e.printStackTrace();
         }
-        return validated;
+        
+        return validated?1:2;
     }
 
     public static boolean hasCaptcha(HttpServletRequest request, String userCaptchaResponse) {
