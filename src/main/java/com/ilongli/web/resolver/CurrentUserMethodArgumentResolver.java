@@ -10,7 +10,7 @@ import com.ilongli.web.annotation.CurrentUser;
 
 
 /**
- * 用于解析@CurrentUser注解参数
+ * 鐢ㄤ簬瑙ｆ瀽@CurrentUser娉ㄨВ鍙傛暟
  */
 public class CurrentUserMethodArgumentResolver implements HandlerMethodArgumentResolver {
 

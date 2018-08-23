@@ -274,6 +274,7 @@ public class ShiroConfig {
 		shiroFilterFactoryBean.setSecurityManager(securityManager);
 		shiroFilterFactoryBean.setLoginUrl("/login");
 		shiroFilterFactoryBean.setUnauthorizedUrl("/unauthorized");
+		shiroFilterFactoryBean.setSuccessUrl("/");
 		
 		HashMap<String, Filter> filters = new HashMap<String, Filter>();
 		filters.put("authc", authcFilter);
@@ -285,7 +286,6 @@ public class ShiroConfig {
 		//anon表示无需验证
 		chainMap.put("/static/**", "anon");
 		chainMap.put("/favicon.ico", "anon");
-		chainMap.put("/index", "anon");
 		chainMap.put("/unauthorized", "anon");
 		chainMap.put("/jcaptcha*", "anon");
 		//authc表示访问该地址用户必须身份验证通过[Subject.isAuthenticated()==true]

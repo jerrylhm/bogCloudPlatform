@@ -2,6 +2,7 @@ package com.ilongli.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.ExcessiveAttemptsException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
@@ -22,6 +23,12 @@ public class IndexController {
 	@RequestMapping("login")
 	public String login(HttpServletRequest req, Model model,
 			@RequestParam(value = "kickout", required = false) String kickout) {
+		
+		//如果已经登录，直接返回到主页
+		if(SecurityUtils.getSubject().isAuthenticated()) {
+			return "redirect:/index";
+		}
+		
 		String exceptionClassName = (String)req.getAttribute("shiroLoginFailure");
 		String error = null;
 		if(ExcessiveAttemptsException.class.getName().equals(exceptionClassName)) {
@@ -35,6 +42,10 @@ public class IndexController {
         } else if (kickout != null) {
         	error = "您被踢出登录";
         }
+		
+		int localPort = req.getLocalPort();
+		
+		model.addAttribute("localPort", localPort);
 		model.addAttribute("error", error);
 		return "login";
 	}
@@ -42,7 +53,7 @@ public class IndexController {
 	/**
 	 * 主页入口
 	 */
-	@RequestMapping("")
+	@RequestMapping({"","index"})
 	public String index(@CurrentUser User loginUser, Model model) {
 		model.addAttribute("username", loginUser.getUsername());
 		return "index";
