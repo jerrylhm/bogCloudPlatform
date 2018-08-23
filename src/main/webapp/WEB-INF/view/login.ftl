@@ -7,7 +7,7 @@
 </head>
 <body>
 
-<div>port:${localPort!""}</div>
+<div>localhost->port:${localPort!""}</div>
 <div class="error">${error!""}</div>
 <form action="" method="post">
 	用户名：<input type="text" name="username"><br/>
