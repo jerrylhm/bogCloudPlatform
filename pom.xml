@@ -212,6 +212,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
+					<!-- 跳过test -->
 					<skip>true</skip>
 				</configuration>
 			</plugin>

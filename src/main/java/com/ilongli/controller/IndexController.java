@@ -43,6 +43,16 @@ public class IndexController {
         	error = "您被踢出登录";
         }
 		
+		System.out.println("serverName : " + req.getServerName());
+		System.out.println("serverPort : " + req.getServerPort());
+		System.out.println("X-Forwarded-For : " + req.getHeader("X-Forwarded-For"));
+		System.out.println("X-Real-IP : " + req.getHeader("X-Real-IP"));
+		System.out.println("X-Real-PORT : " + req.getHeader("X-Real-PORT"));
+		System.out.println("Host : " + req.getHeader("Host"));
+		System.out.println("remoteAddr : " + req.getRemoteAddr());
+		System.out.println("remotePort : " + req.getRemotePort());
+		
+		
 		int localPort = req.getLocalPort();
 		
 		model.addAttribute("localPort", localPort);

@@ -18,7 +18,11 @@ public class MyManageableImageCaptchaService extends DefaultManageableImageCaptc
         super(captchaStore, captchaEngine, minGuarantedStorageDelayInSeconds, maxCaptchaStoreSize, captchaStoreLoadBeforeGarbageCollection);
     }
 
-    public boolean hasCapcha(String id, String userCaptchaResponse) {
+    public boolean hasCaptcha(String id, String userCaptchaResponse) {
         return store.getCaptcha(id).validateResponse(userCaptchaResponse);
+    }
+    
+    public void removeCaptcha(String id) {
+    	store.removeCaptcha(id);
     }
 }

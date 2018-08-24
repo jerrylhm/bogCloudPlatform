@@ -90,7 +90,7 @@ public class ShiroConfig {
 	public SimpleCookie sessionIdCookie() {
 		//这里相当于配置：<constructor-arg value="sid"/>
 		SimpleCookie simpleCookie = new SimpleCookie("sid");
-		simpleCookie.setDomain(".c.com");
+//		simpleCookie.setDomain(".c.com");
 		simpleCookie.setPath("/");	//path设置为 '/' 用于多个系统共享sid
 		simpleCookie.setHttpOnly(true);
 		simpleCookie.setMaxAge(-1);	//-1表示浏览器关闭时失效此Cookie
@@ -103,7 +103,7 @@ public class ShiroConfig {
 	@Bean
 	public SimpleCookie rememberMeCookie() {
 		SimpleCookie simpleCookie = new SimpleCookie("rememberMe");
-		simpleCookie.setDomain(".c.com");
+//		simpleCookie.setDomain(".c.com");
 		simpleCookie.setPath("/");	//path设置为 '/' 用于多个系统共享rememberMe
 		simpleCookie.setHttpOnly(true);
 		simpleCookie.setMaxAge(864000);	//10天

@@ -20,7 +20,7 @@ import com.ilongli.jcaptcha.JCaptcha;
  * @author ilongli
  *
  */
-@WebFilter(filterName = "tJCaptchaFilter", urlPatterns = "/jcaptcha", asyncSupported=true)
+@WebFilter(filterName = "JCaptchaFilter", urlPatterns = "/jcaptcha", asyncSupported=true)
 public class Filter2_JCaptchaFilter extends OncePerRequestFilter {
 
     @Override
@@ -33,6 +33,8 @@ public class Filter2_JCaptchaFilter extends OncePerRequestFilter {
         response.setContentType("image/jpeg");
         
         String sessionId = request.getSession().getId();
+        
+        JCaptcha.captchaService.removeCaptcha(sessionId);
         
         BufferedImage bi = JCaptcha.captchaService.getImageChallengeForID(sessionId);
 

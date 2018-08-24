@@ -1,13 +1,12 @@
 package com.ilongli.jcaptcha;
 
-import com.octo.captcha.service.CaptchaServiceException;
-import com.octo.captcha.service.captchastore.FastHashMapCaptchaStore;
-
 import javax.servlet.http.HttpServletRequest;
+
+import com.octo.captcha.service.CaptchaServiceException;
 
 public class JCaptcha {
     public static final MyManageableImageCaptchaService captchaService
-            = new MyManageableImageCaptchaService(new FastHashMapCaptchaStore(), new GMailEngine(), 180, 100000, 75000);
+            = new MyManageableImageCaptchaService(new RedisCaptchaStore(), new GMailEngine(), 180, 100000, 75000);
 
     /**
      * validate the code
@@ -35,7 +34,7 @@ public class JCaptcha {
         boolean validated = false;
         try {
             String id = request.getSession().getId();
-            validated = captchaService.hasCapcha(id, userCaptchaResponse);
+            validated = captchaService.hasCaptcha(id, userCaptchaResponse);
         } catch (CaptchaServiceException e) {
             e.printStackTrace();
         }

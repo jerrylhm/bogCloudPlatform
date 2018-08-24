@@ -1,5 +1,5 @@
 <#assign base=rc.contextPath />
-<#assign baseSrc="http://localhost:8082" />
+<#assign baseSrc="http://localhost" />
 <html>
 <head>
     <title>登录</title>
